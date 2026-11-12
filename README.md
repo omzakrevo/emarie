@@ -2,8 +2,8 @@
 
 Plateforme SaaS multi-mairies de services administratifs en ligne. Première commune : **Niankorodougou** (province de la Léraba, région des Tannounyan, Burkina Faso).
 
-Statut : **Phase 3 (portail citoyen) terminée, en attente de validation** — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
-Le back-office (Phase 4), les documents PDF (Phase 5), les paiements et les SMS (Phase 6) ne sont **pas encore développés** ; l'étape « paiement » du formulaire est en mode test explicite.
+Statut : **Phase 4 (administration) terminée, en attente de validation** (Phases 1–3 validées) — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
+Les documents PDF (Phase 5), les paiements et les SMS (Phase 6) ne sont **pas encore développés** ; l'étape « paiement » du formulaire est en mode test explicite.
 
 ## Prérequis
 Node 22+, npm 10+, un projet Supabase (ou PostgreSQL 16 pour les tests de base).
