@@ -17,7 +17,7 @@ describe("tableau de bord", () => {
 });
 describe("erreurs de la base", () => {
   it("codes connus -> clés existantes", () => {
-    for (const c of ["transition_not_allowed","note_required","payment_required","registry_check_required","forbidden","not_found","role_escalation","last_admin","invalid_input"]) {
+    for (const c of ["transition_not_allowed","note_required","payment_required","registry_check_required","forbidden","not_found","role_escalation","last_admin","invalid_input","in_use"]) {
       expect(dbErrorKey(c)).toBe(`adm.err.${c}`); expect(dbErrorKey(c) in fr).toBe(true);
     }
   });

@@ -13,6 +13,7 @@ export async function AdminShell({ children }: { children: ReactNode }) {
   const nav: [string, string, boolean][] = [
     ["/admin", m["adm.nav.dashboard"], can(ctx, "applications.read") || can(ctx, "reports.read")],
     ["/admin/demandes", m["adm.nav.requests"], can(ctx, "applications.read")],
+    ["/admin/services", m["adm.nav.services"], can(ctx, "services.manage") || can(ctx, "pricing.manage")],
     ["/admin/agents", m["adm.nav.agents"], can(ctx, "agents.manage")],
     ["/admin/roles", m["adm.nav.roles"], can(ctx, "roles.manage")],
     ["/admin/parametres", m["adm.nav.settings"], can(ctx, "municipality.settings.manage")],

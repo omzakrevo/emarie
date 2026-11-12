@@ -102,6 +102,18 @@ export const fr = {
   "adm.st.skipPayment": "Autoriser l'instruction des demandes sans paiement", "adm.st.skipPaymentWarn": "À réserver aux essais : tant que le paiement en ligne n'est pas actif, aucune demande n'est instruite sans cette option.",
   "adm.st.saved": "Paramètres enregistrés.", "adm.st.textsFr": "Textes publics (français)",
   "adm.pw.title": "Définir mon mot de passe", "adm.pw.new": "Nouveau mot de passe (12 caractères minimum)", "adm.pw.save": "Enregistrer le mot de passe",
+  "adm.nav.services": "Services et tarifs",
+  "adm.err.in_use": "Élément déjà utilisé par des dossiers : rendez-le facultatif plutôt que de le supprimer.",
+  "adm.sv.title": "Services et tarifs", "adm.sv.edit": "Configurer", "adm.sv.active": "Service ouvert au public", "adm.sv.description": "Description (français)",
+  "adm.sv.procedure": "Procédure (français) — à confirmer par la mairie", "adm.sv.delay": "Délai indicatif (jours)", "adm.sv.save": "Enregistrer",
+  "adm.sv.pricing": "Tarif", "adm.sv.currentPrice": "Tarif en vigueur", "adm.sv.noPrice": "Aucun tarif défini : le portail affiche « Tarif à confirmer ».",
+  "adm.sv.newPrice": "Nouveau tarif (FCFA)", "adm.sv.validFrom": "En vigueur à partir du", "adm.sv.setPrice": "Appliquer le nouveau tarif",
+  "adm.sv.priceNote": "L'ancien tarif est conservé dans l'historique et clos la veille. Ne saisissez que des tarifs confirmés officiellement.",
+  "adm.sv.history": "Historique des tarifs", "adm.sv.until": "jusqu'au", "adm.sv.fields": "Champs du formulaire", "adm.sv.fieldsNote": "Le libellé et le caractère obligatoire sont modifiables ; un champ ne se supprime pas.",
+  "adm.sv.label": "Libellé (français)", "adm.sv.help": "Aide (français)", "adm.sv.required": "Obligatoire", "adm.sv.step": "Étape",
+  "adm.sv.documents": "Justificatifs demandés", "adm.sv.documentsNote": "Aucun justificatif n'est exigé tant que la mairie n'en a pas confirmé la liste.",
+  "adm.sv.noDocuments": "Aucun justificatif configuré.", "adm.sv.addDocument": "Ajouter un justificatif", "adm.sv.maxSize": "Taille max (Ko)", "adm.sv.delete": "Supprimer",
+  "adm.sv.saved": "Enregistré.",
 } as const;
 export type MessageKey = keyof typeof fr;
 export type Locale = "fr" | "dyu";

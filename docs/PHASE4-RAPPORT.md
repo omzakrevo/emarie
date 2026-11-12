@@ -32,3 +32,11 @@ Navigation filtrée par permissions ; chaque page revérifie côté serveur. Tex
    recherche par nom du demandeur, page `/admin/connexion` non traduite (Phase 2).
 5. Les statistiques de paiement affichent « disponible avec le paiement en ligne » : aucune donnée n'est inventée.
 6. `workflow.skip_payment` doit rester **désactivé en production** tant que la Phase 6 n'est pas livrée.
+
+## Complément : services, tarifs, justificatifs (migration 0007)
+- **Tarifs** : `set_service_price()` (permission `pricing.manage`) ferme le tarif en cours la veille de l'entrée en vigueur et en ouvre un nouveau ;
+  historique conservé, effet rétroactif refusé, montants bornés. Plus d'écriture directe sur `service_pricing`.
+- **Configuration** (description, procédure, délai, ouverture, libellés/aide/caractère obligatoire des champs, justificatifs) : modifiable sans toucher au code,
+  **auditée automatiquement** (triggers). Un champ ne se supprime pas ; un justificatif déjà utilisé non plus (le rendre facultatif).
+- Interface : `/admin/services` et `/admin/services/[code]`. Aucun tarif ni justificatif par défaut : à saisir uniquement après confirmation officielle.
+- Limite : non testé de bout en bout (pas de Supabase) ; règles SQL testées (`06_service_admin.sql`), contrat TS↔SQL testé.
