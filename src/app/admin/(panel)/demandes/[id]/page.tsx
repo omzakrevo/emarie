@@ -6,6 +6,7 @@ import { pickLocalized } from "@/i18n/messages";
 import { visibleFields } from "@/features/demande/fields";
 import type { FieldDef } from "@/features/demande/types";
 import { can, getAdminContext, requireCan } from "@/server/admin/context";
+import { DocumentPanel } from "@/components/admin/document-panel";
 import { NoteForm, RegistryForm, TransitionForm } from "./forms";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -62,13 +63,15 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
       {isCivil && (can(ctx, "civil_registry.verify") || lastCheck) && (
         <section className={card}><h2 className="mb-1 font-semibold">{t("adm.reg.title")}</h2><p className="mb-3 text-sm text-slate-600">{t("adm.reg.hint")}</p>
           <p className="mb-3 text-sm" data-testid="registry-latest">{lastCheck ? <><strong>{t("adm.reg.latest")} :</strong> {lastCheck.outcome === "found" ? `${t("adm.reg.found")} — ${lastCheck.registry_ref}` : t("adm.reg.notFound")}</> : t("adm.reg.none")}</p>
-          {can(ctx, "civil_registry.verify") && app.status === "UNDER_REVIEW" && <RegistryForm applicationId={id} />}</section>)}
+          {can(ctx, "civil_registry.verify") && app.status === "UNDER_REVIEW" && <RegistryForm applicationId={id} declared={data} />}</section>)}
 
       <section className={card}><h2 className="mb-2 font-semibold">{t("adm.d.actions")}</h2>
         {paymentBlocked && <p className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t("adm.d.paymentGate")}</p>}
         {actions.length === 0 ? <p className="text-sm text-slate-600">{t("adm.d.noActions")}</p> :
           <div className="grid gap-3 sm:grid-cols-2">{actions.map((a) => <TransitionForm key={a.to_status} applicationId={id} to={a.to_status} needsNote={a.requires_note} />)}</div>}
       </section>
+
+      <DocumentPanel ctx={ctx} applicationId={id} status={app.status} />
 
       <section className={card}><h2 className="mb-1 font-semibold">{t("adm.d.notes")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.d.notesHint")}</p>
         <ul className="mb-3 flex flex-col gap-2 text-sm">{(notes ?? []).map((n) => (

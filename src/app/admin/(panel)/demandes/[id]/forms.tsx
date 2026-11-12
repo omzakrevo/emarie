@@ -40,7 +40,7 @@ export function NoteForm({ applicationId }: { applicationId: string }) {
   );
 }
 
-export function RegistryForm({ applicationId }: { applicationId: string }) {
+export function RegistryForm({ applicationId, declared }: { applicationId: string; declared: Record<string, string> }) {
   const { t } = useI18n();
   const [state, action, pending] = useActionState(registryCheckAction, undefined);
   const [outcome, setOutcome] = useState<"found" | "not_found">("found");
@@ -52,7 +52,13 @@ export function RegistryForm({ applicationId }: { applicationId: string }) {
           <label key={o} className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm ${outcome === o ? "border-brand-600 bg-brand-50 font-semibold" : "border-slate-300"}`}>
             <input type="radio" name="outcome" value={o} checked={outcome === o} onChange={() => setOutcome(o)} />{o === "found" ? t("adm.reg.found") : t("adm.reg.notFound")}</label>))}
       </div>
-      {outcome === "found" && <label className="flex flex-col gap-1 text-sm font-medium">{t("adm.reg.ref")}<input name="ref" required maxLength={120} className="min-h-11 rounded-lg border border-slate-300 px-3" /></label>}
+      {outcome === "found" && (<>
+        <label className="flex flex-col gap-1 text-sm font-medium">{t("adm.reg.ref")}<input name="ref" required maxLength={120} className="min-h-11 rounded-lg border border-slate-300 px-3" /></label>
+        <fieldset className="grid gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 sm:grid-cols-2"><legend className="px-1 text-sm font-semibold">{t("adm.reg.dataTitle")}</legend>
+          <p className="text-xs text-amber-900 sm:col-span-2">{t("adm.reg.dataHint")}</p>
+          {([["nom", "Nom", true], ["prenoms", "Prénom(s)", true], ["sexe", "Sexe (M/F)", false], ["date_naissance", "Date de naissance", true], ["heure_naissance", "Heure (HH:MM)", false], ["lieu_naissance", "Lieu de naissance", true], ["nom_pere", "Père", false], ["nom_mere", "Mère", false]] as const).map(([k, label, req]) => (
+            <label key={k} className="flex flex-col gap-1 text-xs font-medium">{label}<input name={`r_${k}`} defaultValue={declared[k] ?? ""} required={req} type={k === "date_naissance" ? "date" : k === "heure_naissance" ? "time" : "text"} maxLength={200} className="min-h-11 rounded-lg border border-slate-300 bg-surface px-3 text-sm" /></label>))}
+        </fieldset></>)}
       <label className="flex flex-col gap-1 text-sm font-medium">{t("adm.reg.note")}<textarea name="note" rows={2} maxLength={500} className={area} /></label>
       <Button type="submit" disabled={pending}>{t("adm.reg.save")}</Button>
       <FormMessage state={state} />

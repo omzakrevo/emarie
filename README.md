@@ -2,8 +2,8 @@
 
 Plateforme SaaS multi-mairies de services administratifs en ligne. Première commune : **Niankorodougou** (province de la Léraba, région des Tannounyan, Burkina Faso).
 
-Statut : **Phase 4 (administration) terminée, en attente de validation** (Phases 1–3 validées) — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
-Les documents PDF (Phase 5), les paiements et les SMS (Phase 6) ne sont **pas encore développés** ; l'étape « paiement » du formulaire est en mode test explicite.
+Statut : **Phase 5 (documents) terminée avec modèles PROVISOIRES, en attente de validation** (Phases 1–4 validées) — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
+Les modèles de documents sont **provisoires** (`mode.pdf` non reçu : voir `docs/PHASE5-RAPPORT.md`) ; les paiements et les SMS (Phase 6) ne sont **pas encore développés** ; l'étape « paiement » du formulaire est en mode test explicite.
 
 ## Prérequis
 Node 22+, npm 10+, un projet Supabase (ou PostgreSQL 16 pour les tests de base).
@@ -20,6 +20,7 @@ Créer un agent : utilisateur dans Supabase Auth (e-mail + mot de passe), puis l
 ## Tests
 ```bash
 npm test                 # unitaires (champs dynamiques, secrets, fichiers, i18n, commune)
+# PDF réels (Chromium requis) : CHROMIUM_EXECUTABLE_PATH=/chemin/chrome
 E2E_HARNESS=1 npx next dev -p 3222 &  npm run test:e2e   # formulaire swipe dans Chromium mobile (actions simulées)
 npm run typecheck && npm run lint && npm run build
 # Base : PostgreSQL JETABLE uniquement (le script vide les schémas public et auth)

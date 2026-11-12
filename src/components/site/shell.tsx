@@ -22,7 +22,10 @@ export async function SiteShell({ children }: { children: ReactNode }) {
     <I18nProvider locale={locale} messages={messages}>
       <header className="bg-brand-900 text-white">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
-          <div aria-label="Emplacement du logo officiel" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-dashed border-white/60 text-[10px] leading-tight text-white/70">LOGO</div>
+          {m.logo_path
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/municipality-logos/${m.logo_path}`} alt="" className="h-11 w-11 shrink-0 rounded-full bg-white object-contain" />
+            : <div aria-label="Emplacement du logo officiel" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-dashed border-white/60 text-[10px] leading-tight text-white/70">LOGO</div>}
           <Link href="/" className="flex-1 leading-tight">
             <span className="block text-lg font-bold">{t("app.name")}</span>
             <span className="block text-xs text-white/80">{m.name}</span>

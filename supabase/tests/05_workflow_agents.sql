@@ -67,13 +67,14 @@ do $$ declare res uuid := (select v from _t where k='res'); nai uuid := (select 
   -- Extrait de naissance : validation impossible sans vérification au registre
   perform agent_transition(nai,'UNDER_REVIEW');
   perform pg_temp.expect(format('select agent_transition(%L,''VALIDATED'')', nai), 'registry_check_required');
-  perform pg_temp.expect(format('select record_registry_check(%L,''found'','''')', nai), 'invalid_input');           -- numéro obligatoire
-  perform record_registry_check(nai,'not_found',null,'Aucun acte correspondant');
+  perform pg_temp.expect(format('select record_registry_check(%L,''found'','''',null)', nai), 'invalid_input');           -- numéro obligatoire
+  perform record_registry_check(nai,'not_found',null,null,'Aucun acte correspondant');
   perform pg_temp.expect(format('select agent_transition(%L,''VALIDATED'')', nai), 'registry_check_required');      -- dernier résultat = introuvable
-  perform record_registry_check(nai,'found','REG-FICTIF-123');
+  perform pg_temp.expect(format('select record_registry_check(%L,''found'',''REG-1'',''{"nom":"X"}''::jsonb)', nai), 'invalid_input');   -- données registre incomplètes
+  perform record_registry_check(nai,'found','REG-FICTIF-123','{"nom":"REGISTRE","prenoms":"Fictif","date_naissance":"1990-01-01","lieu_naissance":"Ville fictive"}'::jsonb);
   perform agent_transition(nai,'VALIDATED');
   assert (select status from applications where id=nai)='VALIDATED';
-  perform pg_temp.expect(format('select record_registry_check(%L,''found'',''X'')', res), 'invalid_input');          -- pas un extrait de naissance
+  perform pg_temp.expect(format('select record_registry_check(%L,''found'',''X'',''{}''::jsonb)', res), 'invalid_input');          -- pas un extrait de naissance
   -- ajout seul : sans politique UPDATE/DELETE, la RLS laisse 0 ligne modifiable (le trigger protège en plus le propriétaire)
   update civil_registry_checks set outcome='found'; get diagnostics n = row_count; assert n=0, 'registry modifiable';
   update application_events set to_status='PAID'; get diagnostics n = row_count; assert n=0, 'events modifiables';
@@ -88,7 +89,7 @@ set local role authenticated; select pg_temp.as_user('b3');
 do $$ declare res uuid := (select v from _t where k='res'); begin
   perform pg_temp.expect(format('select agent_transition(%L,''REJECTED'',''non'')', res), 'forbidden');
   perform pg_temp.expect(format('select agent_transition(%L,''VALIDATED'')', res), 'forbidden');
-  perform pg_temp.expect(format('select record_registry_check(%L,''found'',''X'')', (select v from _t where k='nai')), 'forbidden');
+  perform pg_temp.expect(format('select record_registry_check(%L,''found'',''X'',''{}''::jsonb)', (select v from _t where k='nai')), 'forbidden');
   insert into application_notes (municipality_id, application_id, author_id, body)
     values ((select v from _t where k='mA'), res, '00000000-0000-0000-0000-0000000000b3', 'Pièce illisible (observation interne)');
   begin insert into application_notes (municipality_id, application_id, author_id, body)

@@ -10,12 +10,14 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:db": "scripts/test-db.sh",
-    "test:e2e": "node tests/e2e/wizard.e2e.cjs"
+    "test:e2e": "node tests/e2e/wizard.e2e.cjs",
+    "test:integration": "TEST_DATABASE_URL=\"${TEST_DATABASE_URL:?base jetable requise}\" vitest run tests/integration"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.0",
     "next": "16.4.6",
+    "playwright-core": "^1.63.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",

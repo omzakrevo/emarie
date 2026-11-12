@@ -34,13 +34,18 @@ export async function addNoteAction(_p: ActionState, form: FormData): Promise<Ac
   return { ok: true };
 }
 
+const REGISTRY_KEYS = ["nom", "prenoms", "sexe", "date_naissance", "heure_naissance", "lieu_naissance", "nom_pere", "nom_mere"] as const;
 export async function registryCheckAction(_p: ActionState, form: FormData): Promise<ActionState> {
   const id = uuid.safeParse(form.get("applicationId"));
   const outcome = z.enum(["found", "not_found"]).safeParse(form.get("outcome"));
   if (!id.success || !outcome.success) return { error: "adm.err.invalid_input" };
   await getAdminContext();
+  // Données relevées DANS LE REGISTRE (pas les données déclarées) : elles alimenteront le document.
+  const data: Record<string, string> = {};
+  if (outcome.data === "found") for (const k of REGISTRY_KEYS) { const v = String(form.get(`r_${k}`) ?? "").trim().slice(0, 200); if (v) data[k] = v; }
   const { error } = await (await createServerSupabase()).rpc("record_registry_check", {
-    p_application: id.data, p_outcome: outcome.data, p_registry_ref: String(form.get("ref") ?? "").slice(0, 120), p_note: String(form.get("note") ?? "").slice(0, 500) || null,
+    p_application: id.data, p_outcome: outcome.data, p_registry_ref: String(form.get("ref") ?? "").slice(0, 120),
+    p_registry_data: outcome.data === "found" ? data : null, p_note: String(form.get("note") ?? "").slice(0, 500) || null,
   });
   if (error) return fail(error.message);
   revalidatePath(`/admin/demandes/${id.data}`);
