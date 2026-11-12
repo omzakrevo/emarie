@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "test:db": "scripts/test-db.sh"
+    "test:db": "scripts/test-db.sh",
+    "test:e2e": "node tests/e2e/wizard.e2e.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

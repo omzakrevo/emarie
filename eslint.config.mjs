@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "tests/e2e/**", // script Node (CommonJS) exécuté hors de Next
   ]),
 ]);
 

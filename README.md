@@ -2,8 +2,8 @@
 
 Plateforme SaaS multi-mairies de services administratifs en ligne. Première commune : **Niankorodougou** (province de la Léraba, région des Tannounyan, Burkina Faso).
 
-Statut : **Phase 2 (socle technique) terminée** — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
-Le portail citoyen, le back-office, les paiements et les SMS ne sont **pas encore développés**.
+Statut : **Phase 3 (portail citoyen) terminée, en attente de validation** — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
+Le back-office (Phase 4), les documents PDF (Phase 5), les paiements et les SMS (Phase 6) ne sont **pas encore développés** ; l'étape « paiement » du formulaire est en mode test explicite.
 
 ## Prérequis
 Node 22+, npm 10+, un projet Supabase (ou PostgreSQL 16 pour les tests de base).
@@ -19,7 +19,8 @@ Créer un agent : utilisateur dans Supabase Auth (e-mail + mot de passe), puis l
 
 ## Tests
 ```bash
-npm test                 # unitaires (résolution de commune)
+npm test                 # unitaires (champs dynamiques, secrets, fichiers, i18n, commune)
+E2E_HARNESS=1 npx next dev -p 3222 &  npm run test:e2e   # formulaire swipe dans Chromium mobile (actions simulées)
 npm run typecheck && npm run lint && npm run build
 # Base : PostgreSQL JETABLE uniquement (le script vide les schémas public et auth)
 DATABASE_URL=postgresql://user@host/db_jetable npm run test:db

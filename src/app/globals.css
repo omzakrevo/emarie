@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f6f9;
+  --foreground: #14213d;
+  --surface: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-brand-50: #eef3fb;
+  --color-brand-100: #d9e5f6;
+  --color-brand-600: #1f55a8;
+  --color-brand-700: #17428a;
+  --color-brand-900: #0f2a5a;
+  --color-accent-50: #eaf6ef;
+  --color-accent-600: #1d8a4e;
+  --color-accent-700: #166b3c;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* Transitions horizontales du formulaire */
+@keyframes step-in-right { from { opacity: 0; transform: translateX(48px); } to { opacity: 1; transform: none; } }
+@keyframes step-in-left { from { opacity: 0; transform: translateX(-48px); } to { opacity: 1; transform: none; } }
+.step-forward { animation: step-in-right 260ms ease-out both; }
+.step-backward { animation: step-in-left 260ms ease-out both; }
+@media (prefers-reduced-motion: reduce) { .step-forward, .step-backward { animation: none; } }
+
+:focus-visible { outline: 3px solid var(--color-brand-600); outline-offset: 2px; }
