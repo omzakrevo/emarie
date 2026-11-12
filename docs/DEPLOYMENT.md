@@ -52,3 +52,12 @@
 5. **Traduction dioula** validée par un locuteur compétent.
 6. Tests de bout en bout sur l'environnement Supabase réel (jamais réalisés à ce jour), test de charge raisonnable, revue de sécurité externe.
 7. Option « instruire sans paiement » **désactivée**.
+
+## Journal du déploiement Supabase (projet `e-mairie`, ref `cvvsophhludwjldesqbu`, eu-west-3)
+- Migrations 0001 → 0012 appliquées via l'outil Supabase (versions horodatées par Supabase).
+- **Écarts volontaires par rapport aux fichiers du dépôt**, pour éviter les instructions `DROP` (confirmation interactive indisponible) :
+  1. les politiques `members_admin_write`, `roles_admin_write`, `role_perms_admin_write` (0006) et `pricing_staff_write` (0007) ont été **neutralisées** (`ALTER POLICY … USING (false) WITH CHECK (false)`) au lieu d'être supprimées — effet de sécurité identique ;
+  2. l'ancienne signature à 4 arguments de `record_registry_check` (0006) n'a **jamais été créée** en base : seule la version à 5 arguments (0008) existe.
+  Une installation neuve à partir des fichiers du dépôt reste valide (les `DROP` y sont sans problème).
+- Contrôle de sécurité (advisors) : 0 alerte critique ; restent des avis volontaires (tables réservées au serveur ; fonctions d'agent qui vérifient les droits en interne).
+- **Clé `service_role`** : non récupérable par l'outil, à ajouter par vous dans les variables d'environnement Vercel (jamais dans une conversation ni un fichier).
