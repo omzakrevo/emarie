@@ -162,7 +162,7 @@ do $$ declare mA uuid := (select v from _t where k='mA'); j jsonb; begin
   j := dashboard_stats(mA);
   assert (j->'by_status'->>'VALIDATED')::int=1 and (j->'by_status'->>'UNDER_REVIEW')::int=1, j::text;
   assert jsonb_array_length(j->'by_service')=2;
-  assert (j->'payments_total_xof') = 'null'::jsonb, 'aucun montant de paiement inventé';
+  assert (j->'payments_total_xof') = '0'::jsonb, 'aucun paiement réel : total à 0, rien d''inventé';
   j := dashboard_stats(mA, current_date+1, null, null); assert j->'by_status' = '{}'::jsonb, 'filtre de dates';
   j := dashboard_stats(mA, null, null, (select id from services where municipality_id=mA and code='extrait_naissance'));
   assert jsonb_array_length(j->'by_service')=1 and (j->'by_status'->>'VALIDATED')::int=1, j::text;

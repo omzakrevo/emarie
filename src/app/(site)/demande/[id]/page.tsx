@@ -5,6 +5,7 @@ import { getT } from "@/i18n/server";
 import { AccessError, resolveApplication } from "@/server/applications/access";
 import { getServiceById } from "@/server/applications/catalog";
 import { listFiles, loadData } from "@/server/applications/operations";
+import { listPayOptions } from "@/server/payments/service";
 
 export default async function Page({ params }: PageProps<"/demande/[id]">) {
   const { id } = await params;
@@ -16,6 +17,6 @@ export default async function Page({ params }: PageProps<"/demande/[id]">) {
   }
   const service = await getServiceById(app.municipality_id, app.service_id);
   if (!service) notFound();
-  const [data, files] = await Promise.all([loadData(app), listFiles(app)]);
-  return <RealWizard services={[]} initial={{ draftId: app.id, service, data, files }} />;
+  const [data, files, payOptions] = await Promise.all([loadData(app), listFiles(app), listPayOptions(app.municipality_id)]);
+  return <RealWizard services={[]} payOptions={payOptions} initial={{ draftId: app.id, service, data, files }} />;
 }

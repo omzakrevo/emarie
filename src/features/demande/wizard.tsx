@@ -9,6 +9,8 @@ import { DocumentsStep, type DocActions } from "./documents-step";
 import { validateFields, visibleFields, type ErrorCode } from "./fields";
 import type { FormData_, ServiceDetail, ServiceSummary, UploadedFile } from "./types";
 import type { StartResult, SubmitActionResult } from "@/server/applications/actions";
+import type { PaymentStatusResult, StartPaymentResult } from "@/server/payments/actions";
+import type { PayOption, PayStatus } from "@/features/payments/types";
 import type { UploadResult } from "./upload";
 
 export interface WizardActions {
@@ -18,13 +20,18 @@ export interface WizardActions {
   upload(draftId: string, documentKey: string, file: File): Promise<UploadResult>;
   remove(draftId: string, fileId: string): Promise<boolean>;
   fileUrl(fileId: string): string;
+  startPayment(i: { reference: string; secret: string | null; provider: string; phone: string; key: string }): Promise<StartPaymentResult>;
+  paymentStatus(i: { reference: string; secret: string | null }): Promise<PaymentStatusResult>;
+  receiptUrl(i: { reference: string; secret: string | null }): Promise<{ ok: true; url: string } | { ok: false }>;
 }
+const newKey = () => (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join(""));
+type PayState = { status: "IDLE" | "STARTING" | PayStatus | "ERROR"; redirectUrl?: string; error?: string; free?: boolean; receiptReady?: boolean };
 export interface WizardInitial { draftId: string; service: ServiceDetail; data: FormData_; files: UploadedFile[] }
 type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const TOTAL = 7;
 const STEP_KEYS: MessageKey[] = ["wizard.s1", "wizard.s2", "wizard.s3", "wizard.s4", "wizard.s5", "wizard.s6", "wizard.s7"];
 
-export function Wizard({ services, initial, actions, preselect }: { services: ServiceSummary[]; initial?: WizardInitial; actions: WizardActions; preselect?: string }) {
+export function Wizard({ services, initial, actions, preselect, payOptions = [] }: { services: ServiceSummary[]; initial?: WizardInitial; actions: WizardActions; preselect?: string; payOptions?: PayOption[] }) {
   const { t, locale } = useI18n();
   const [step, setStep] = useState<Step>(initial ? 2 : 1);
   const [dir, setDir] = useState<"forward" | "backward">("forward");
@@ -38,6 +45,11 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "failed">("idle");
   const [busy, setBusy] = useState(Boolean(preselect && !initial));
   const [result, setResult] = useState<{ reference: string; trackingSecret: string | null } | null>(null);
+  const usable = payOptions.filter((o) => o.available);
+  const [provider, setProvider] = useState(usable[0]?.provider ?? "");
+  const [payPhone, setPayPhone] = useState(initial?.data?.telephone ?? "");
+  const [pay, setPay] = useState<PayState>({ status: "IDLE" });
+  const payKey = useRef("");   // clé d'idempotence : stable pour une tentative (double clic), renouvelée pour une nouvelle tentative
   const dirty = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
 
@@ -90,19 +102,44 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
   }
   const back = () => { if (step > 2 && step < 7) go((step - 1) as Step); };
 
-  async function submit() {
-    if (!service || !draftId) return;
-    setBusy(true); setBanner("");
-    const r = await actions.submit(draftId, data);
-    setBusy(false);
-    if (r.ok) { setResult({ reference: r.reference, trackingSecret: r.trackingSecret }); go(7); return; }
-    if (r.error === "validation") {
+  function onSubmitError(r: Extract<SubmitActionResult, { ok: false }>) {
+    if (r.error === "validation" && service) {
       setErrors(r.fieldErrors ?? {}); setMissingDocs(r.missingDocuments ?? []);
       const stepWithError = service.fields.find((f) => r.fieldErrors?.[f.key])?.step as Step | undefined;
       go(stepWithError ?? 4); setBanner(t("wizard.fixErrors")); return;
     }
     setBanner(r.error === "rate_limited" ? t("common.tooMany") : t("common.error"));
   }
+  async function beginPayment(res: { reference: string; trackingSecret: string | null }, fresh = false) {
+    if (fresh || !payKey.current) payKey.current = newKey();
+    setPay({ status: "STARTING" });
+    const r = await actions.startPayment({ reference: res.reference, secret: res.trackingSecret, provider, phone: payPhone, key: payKey.current });
+    if (!r.ok) setPay({ status: "ERROR", error: r.error });
+    else if (r.free) setPay({ status: "PAID", free: true, receiptReady: true });
+    else setPay({ status: "PENDING", redirectUrl: r.redirectUrl });
+  }
+  /** Dépose la demande (si ce n'est pas déjà fait) puis déclenche le paiement ; sans prestataire disponible : dépôt seul. */
+  async function submit(withPayment: boolean) {
+    if (!service || !draftId) return;
+    setBusy(true); setBanner("");
+    let res = result;
+    if (!res) {
+      const r = await actions.submit(draftId, data);
+      if (!r.ok) { setBusy(false); onSubmitError(r); return; }
+      res = { reference: r.reference, trackingSecret: r.trackingSecret }; setResult(res);
+    }
+    if (withPayment) await beginPayment(res);
+    setBusy(false); go(7);
+  }
+  // Suivi du paiement : le statut vient du serveur (webhook vérifié), jamais du navigateur
+  useEffect(() => {
+    if (step !== 7 || !result || !(pay.status === "PENDING" || (pay.status === "PAID" && !pay.receiptReady))) return;
+    const id = setInterval(async () => {
+      const r = await actions.paymentStatus({ reference: result.reference, secret: result.trackingSecret });
+      if (r.ok && r.status !== "NONE") setPay((p) => ({ ...p, status: r.status, receiptReady: r.receiptReady }));
+    }, 4000);
+    return () => clearInterval(id);
+  }, [step, result, pay.status, pay.receiptReady, actions]);
 
   // Navigation au balayage (mobile) : ignorée sur les champs de saisie pour ne pas gêner la saisie/défilement.
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -123,6 +160,7 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
     upload: (k, f) => actions.upload(draftId, k, f), remove: (id) => actions.remove(draftId, id), fileUrl: actions.fileUrl,
   } : null;
   const isCivil = service?.code === "extrait_naissance";
+  const payable = !!service && (service.amount_xof ?? 0) > 0 && usable.length > 0;
   const progress = Math.round((step / TOTAL) * 100);
 
   return (
@@ -194,9 +232,19 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-slate-200 bg-surface p-4">
               <p className="text-sm text-slate-600">{t("wizard.amount")}</p>
-              <p className="text-2xl font-bold text-brand-900" data-testid="amount">{service.amount_xof === null ? t("service.priceTbc") : `${service.amount_xof.toLocaleString("fr-FR")} FCFA`}</p>
+              <p className="text-2xl font-bold text-brand-900" data-testid="amount">{service.amount_xof === null ? t("service.priceTbc") : service.amount_xof === 0 ? t("wizard.payFree") : `${service.amount_xof.toLocaleString("fr-FR")} FCFA`}</p>
             </div>
-            <p role="note" className="rounded-xl bg-amber-50 p-3 text-sm font-medium text-amber-900">{t("wizard.sandbox")}</p>
+            {payable ? (
+              <div className="flex flex-col gap-3">
+                <div role="radiogroup" aria-label={t("wizard.payWith")} className="flex flex-col gap-2">
+                  {usable.map((o) => (
+                    <label key={o.provider} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 ${provider === o.provider ? "border-brand-600 bg-brand-50 font-semibold" : "border-slate-300 bg-surface"}`}>
+                      <input type="radio" name="provider" value={o.provider} checked={provider === o.provider} onChange={() => setProvider(o.provider)} className="h-4 w-4 accent-brand-700" />{o.label}</label>))}
+                </div>
+                <label className="flex flex-col gap-1 text-sm font-medium">{t("wizard.payPhone")}
+                  <input name="payPhone" type="tel" inputMode="tel" autoComplete="tel" value={payPhone} onChange={(e) => setPayPhone(e.target.value)} className="min-h-12 w-full rounded-xl border border-slate-300 bg-surface px-4 text-base" /></label>
+                {provider === "sandbox" && <p role="note" className="rounded-xl bg-red-50 p-3 text-sm font-bold text-red-800">{t("wizard.paySandboxNote")}</p>}
+              </div>) : service.amount_xof !== 0 ? <p role="note" className="rounded-xl bg-amber-50 p-3 text-sm font-medium text-amber-900">{t("wizard.sandbox")}</p> : null}
           </div>)}
 
         {step === 7 && result && (
@@ -214,7 +262,20 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
                   <Button variant="secondary" type="button" onClick={() => window.print()}>{t("common.print")}</Button>
                 </div></>)}
             </div>
-            <p className="text-sm text-slate-600">{t("wizard.receiptLater")}</p>
+            {pay.status !== "IDLE" && (
+              <div className="rounded-2xl border border-slate-200 bg-surface p-4" aria-live="polite" data-testid="pay-card">
+                {pay.status === "STARTING" && <p>{t("wizard.payStarting")}</p>}
+                {pay.status === "PENDING" && (<><p className="font-medium" data-testid="pay-pending">{t("wizard.payPending")}</p>
+                  {pay.redirectUrl && <a href={pay.redirectUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block font-semibold text-brand-700 underline">{t("wizard.payOpen")}</a>}</>)}
+                {pay.status === "PAID" && (<><p className="font-semibold text-accent-700" data-testid="pay-paid">{pay.free ? t("wizard.payFree") : t("wizard.payDone")}</p>
+                  {!pay.free && (pay.receiptReady
+                    ? <Button className="mt-2" variant="secondary" type="button" onClick={async () => { const r = await actions.receiptUrl({ reference: result.reference, secret: result.trackingSecret }); if (r.ok) window.open(r.url, "_blank", "noopener"); }}>{t("wizard.receipt")}</Button>
+                    : <p className="mt-1 text-sm text-slate-600">{t("wizard.receiptPreparing")}</p>)}</>)}
+                {(pay.status === "FAILED" || pay.status === "CANCELLED" || pay.status === "ERROR") && (<>
+                  <p role="alert" className="font-medium text-red-700" data-testid="pay-failed">{pay.status === "ERROR" ? t(`wizard.payErr.${pay.error}` as never) : t("wizard.payFailed")}</p>
+                  {usable.length > 0 && <Button className="mt-2" type="button" disabled={busy} onClick={async () => { setBusy(true); await beginPayment(result, true); setBusy(false); }}>{t("wizard.payRetry")}</Button>}</>)}
+              </div>)}
+            {pay.status === "IDLE" && (service?.amount_xof ?? 0) > 0 && <p className="text-sm font-medium text-amber-900">{t("wizard.payUnpaid")}</p>}
             <Button variant="ghost" type="button" // rechargement complet voulu : repart d'un formulaire vierge
             // eslint-disable-next-line @next/next/no-location-assign-relative-destination
             onClick={() => { window.location.href = "/demande"; }}>{t("wizard.newRequest")}</Button>
@@ -225,7 +286,7 @@ export function Wizard({ services, initial, actions, preselect }: { services: Se
         <div className="sticky bottom-0 mt-6 flex gap-3 bg-background/95 py-3 backdrop-blur">
           {step > 2 && <Button variant="secondary" type="button" onClick={back} className="flex-1"><Icon name="arrowLeft" className="h-5 w-5" />{t("common.back")}</Button>}
           {step < 6 && <Button type="button" onClick={next} className="flex-1">{t("common.next")}<Icon name="arrowRight" className="h-5 w-5" /></Button>}
-          {step === 6 && <Button variant="accent" type="button" disabled={busy} onClick={submit} className="flex-1">{busy ? t("common.loading") : t("common.submit")}</Button>}
+          {step === 6 && <Button variant="accent" type="button" disabled={busy} onClick={() => submit(payable)} className="flex-1">{busy ? t("common.loading") : payable ? t("wizard.payNow", { amount: `${(service?.amount_xof ?? 0).toLocaleString("fr-FR")} FCFA` }) : t("common.submit")}</Button>}
         </div>)}
     </div>
   );

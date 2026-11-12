@@ -1,5 +1,5 @@
 import type { MessageKey } from "@/i18n/messages";
-const CODES = ["transition_not_allowed", "note_required", "payment_required", "registry_check_required", "forbidden", "not_found", "role_escalation", "last_admin", "invalid_input", "in_use", "template_missing", "document_locked", "specimen_not_releasable", "verification_required"] as const;
+const CODES = ["transition_not_allowed", "note_required", "payment_required", "registry_check_required", "forbidden", "not_found", "role_escalation", "last_admin", "invalid_input", "in_use", "template_missing", "document_locked", "specimen_not_releasable", "verification_required", "self_approval", "price_unknown", "payment_in_progress", "provider_disabled"] as const;
 
 /** Convertit un message d'erreur de la base (codes stables) en clé de traduction. */
 export function dbErrorKey(message: string | undefined | null): MessageKey {

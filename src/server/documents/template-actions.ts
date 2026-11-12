@@ -8,7 +8,7 @@ import { renderDocumentHtml, sampleData } from "@/features/documents/render";
 import { validateContent, TEMPLATE_CODES, type TemplateContent, type TemplateCode } from "@/features/documents/schema";
 import { getAdminContext } from "@/server/admin/context";
 import { rateLimit } from "@/server/rate-limit";
-import { logoDataUri } from "./actions";
+import { logoDataUri } from "./logo";
 import { renderPdf } from "./pdf";
 
 const uuid = z.string().uuid();

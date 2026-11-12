@@ -97,9 +97,9 @@ const SHOT = process.env.E2E_SHOTS || "";
 
   // Paiement : aucune simulation
   assert.equal(await page.getByTestId("amount").innerText(), "Tarif à confirmer par la mairie");
-  assert.ok(await page.getByText(/Mode test : le paiement en ligne n'est pas encore activé/).isVisible());
+  assert.ok(await page.getByText(/Le paiement en ligne n'est pas disponible pour le moment/).isVisible());
   await shot("6-paiement");
-  check("étape paiement : tarif non inventé, mode test explicite", () => {});
+  check("étape paiement : tarif non inventé, indisponibilité du paiement expliquée", () => {});
 
   await page.getByRole("button", { name: "Soumettre ma demande" }).click(); await step(7);
   assert.equal(await page.getByTestId("reference").innerText(), "TST-2026-000001");

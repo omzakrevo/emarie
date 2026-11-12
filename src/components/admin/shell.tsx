@@ -15,6 +15,8 @@ export async function AdminShell({ children }: { children: ReactNode }) {
     ["/admin/demandes", m["adm.nav.requests"], can(ctx, "applications.read")],
     ["/admin/documents", m["adm.nav.documents"], can(ctx, "documents.print") || can(ctx, "documents.generate") || can(ctx, "documents.withdraw") || can(ctx, "documents.release")],
     ["/admin/modeles", m["adm.nav.templates"], can(ctx, "templates.manage")],
+    ["/admin/paiements", m["adm.nav.payments"], can(ctx, "payments.read")],
+    ["/admin/sms", m["adm.nav.sms"], can(ctx, "sms.manage")],
     ["/admin/services", m["adm.nav.services"], can(ctx, "services.manage") || can(ctx, "pricing.manage")],
     ["/admin/agents", m["adm.nav.agents"], can(ctx, "agents.manage")],
     ["/admin/roles", m["adm.nav.roles"], can(ctx, "roles.manage")],

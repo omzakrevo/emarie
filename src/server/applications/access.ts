@@ -50,3 +50,25 @@ export async function resolveApplication(id: string, opts: { draftOnly: boolean 
   if (opts.draftOnly && app.status !== "DRAFT") throw new AccessError("locked");
   return app;
 }
+
+const REF_RE = /^[A-Z]{2,5}-\d{4}-\d{6}$/;
+/**
+ * Accès d'un citoyen à une demande DÉPOSÉE : compte connecté propriétaire, OU référence + code de suivi (invité).
+ * Limitation de débit par client et par référence ; null = introuvable ou refusé (réponse indifférenciée).
+ */
+export async function authenticateByReference(referenceRaw: string, secret: string | null): Promise<ApplicationRow | null> {
+  const { clientFingerprint, rateLimit } = await import("@/server/rate-limit");
+  const { normalizeTrackingSecret } = await import("@/server/security/secrets");
+  const reference = referenceRaw.trim().toUpperCase();
+  if (!REF_RE.test(reference)) return null;
+  const m = await getCurrentMunicipality();
+  const { data } = await createAdminSupabase().from("applications")
+    .select("id, municipality_id, service_id, reference, status, profile_id, draft_token_hash, locale, tracking_secret_hash")
+    .eq("municipality_id", m.id).eq("reference", reference).maybeSingle();
+  if (data?.profile_id && (await currentUserId()) === data.profile_id) return data as ApplicationRow;
+  if (!secret || normalizeTrackingSecret(secret).length !== 12) return null;
+  const fp = await clientFingerprint();
+  if (!(await rateLimit("track-ip", fp, 60, 900)) || !(await rateLimit("track-ref", reference, 20, 900))) return null;
+  const supplied = hashSecret("tracking", secret, serverEnv().TRACKING_SECRET_PEPPER);
+  return data && safeEqualHex((data as { tracking_secret_hash: string | null }).tracking_secret_hash, supplied) ? (data as ApplicationRow) : null;
+}

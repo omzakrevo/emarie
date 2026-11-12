@@ -12,21 +12,11 @@ import type { ActionState } from "@/server/admin/actions";
 import { rateLimit } from "@/server/rate-limit";
 import { sniffMime } from "@/server/files/sniff";
 import { renderPdf } from "./pdf";
+import { logoDataUri } from "./logo";
 
 const uuid = z.string().uuid();
 const bad = (): ActionState => ({ error: "adm.err.invalid_input" });
 const refresh = (appId?: string) => { revalidatePath("/admin/documents"); revalidatePath("/admin"); if (appId) revalidatePath(`/admin/demandes/${appId}`); };
-
-export async function logoDataUri(municipalityId: string, logoPath: string | null): Promise<string | null> {
-  if (!logoPath) return null;
-  try {
-    const { data } = await createAdminSupabase().storage.from("municipality-logos").download(logoPath);
-    if (!data) return null;
-    const buf = new Uint8Array(await data.arrayBuffer()); const mime = sniffMime(buf);
-    if (!mime || mime === "application/pdf" || buf.length > 1_000_000) return null;
-    return `data:${mime};base64,${Buffer.from(buf).toString("base64")}`;
-  } catch { return null; }
-}
 
 /** prepare (base : droits, statut, numéro, données figées) -> rendu PDF -> stockage privé -> finalize (base : statut + empreinte). */
 export async function generateDocumentAction(_p: ActionState, form: FormData): Promise<ActionState> {
