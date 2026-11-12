@@ -17,3 +17,5 @@ export async function POST(req: Request) {
   return NextResponse.json({ receiptsGenerated: fixed }, { headers: { "Cache-Control": "no-store" } });
 }
 export const GET = POST;
+
+export const maxDuration = 60;   // rendu PDF (quittance) possible

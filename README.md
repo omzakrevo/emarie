@@ -5,6 +5,9 @@ Plateforme SaaS multi-mairies de services administratifs en ligne. Première com
 Statut : **Phase 6 (paiements, quittances, SMS) terminée — AUCUN prestataire réel intégré, en attente de validation** (Phases 1–5 validées) — voir `docs/PHASE1-ANALYSE-ARCHITECTURE.md` pour l'architecture complète.
 Les modèles de documents sont **provisoires** (`mode.pdf` non reçu : voir `docs/PHASE5-RAPPORT.md`) ; **Orange Money, Moov Money et le fournisseur SMS ne sont PAS intégrés** (voir `docs/PAYMENTS.md`) : seul un mode sandbox/test, clairement étiqueté, existe.
 
+## Déploiement
+Voir `docs/DEPLOYMENT.md` (état, procédure Supabase + Vercel, contrôles, bloquants avant production). Vérifier la configuration : `npm run check:env`.
+
 ## Prérequis
 Node 22+, npm 10+, un projet Supabase (ou PostgreSQL 16 pour les tests de base).
 

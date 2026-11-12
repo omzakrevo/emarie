@@ -35,3 +35,5 @@ export default async function Page({ params, searchParams }: PageProps<"/admin/m
         {current.status === "draft" && <DeleteDraftForm versionId={current.id} />}</div>
     </div>);
 }
+
+export const maxDuration = 60;   // actions serveur de génération/prévisualisation PDF

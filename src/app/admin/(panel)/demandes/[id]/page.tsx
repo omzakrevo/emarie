@@ -85,3 +85,5 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
     </div>
   );
 }
+
+export const maxDuration = 60;   // actions serveur de génération/prévisualisation PDF

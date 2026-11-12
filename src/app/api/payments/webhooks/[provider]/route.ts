@@ -8,3 +8,5 @@ export async function POST(req: Request, ctx: RouteContext<"/api/payments/webhoo
   const r = await handleWebhook(provider, raw, req.headers, await clientFingerprint());
   return NextResponse.json(r.body, { status: r.status, headers: { "Cache-Control": "no-store" } });
 }
+
+export const maxDuration = 60;   // rendu PDF (quittance) possible
