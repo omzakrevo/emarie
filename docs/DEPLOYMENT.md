@@ -75,3 +75,5 @@
   ```
   (répéter avec `preview` si nécessaire) puis `vercel deploy` (ou connecter un dépôt Git au projet).
 - La protection Vercel Auth est active par défaut sur le projet : le site de préproduction n'est visible que des membres de l'équipe.
+
+- Migration `0013_official_model_layout` appliquée (modèles v2 fidèles au PDF de référence, format de numéro `{year}-{seq3}/RTNY/PLRB/CNKDG/M/SG` pour Niankorodougou, date d'acte au registre, nom du signataire). v1 archivées. Tous les modèles restent PROVISOIRES.

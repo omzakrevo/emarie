@@ -145,6 +145,8 @@ export const fr = {
   "adm.tpl.f.intro": "Texte d'introduction", "adm.tpl.f.rows": "Lignes d'informations (Libellé | {{champ}})", "adm.tpl.f.closing": "Formule de clôture", "adm.tpl.f.placeDate": "Lieu et date",
   "adm.tpl.f.signTitle": "Qualité du signataire (texte imprimé)", "adm.tpl.f.sigBox": "Cadre de signature", "adm.tpl.f.stampBox": "Cadre du cachet officiel", "adm.tpl.f.taxBox": "Cadre du timbre communal",
   "adm.tpl.f.taxLabel": "Libellé du timbre", "adm.tpl.errors": "Contenu invalide :",
+  "adm.st.documents": "Documents officiels", "adm.st.signerName": "Nom de l'officier d'état civil (imprimé sous la signature)", "adm.st.signerNameHint": "Laissez vide pour ne rien imprimer. À renseigner par la mairie.",
+  "adm.st.crFormat": "Format du numéro des certificats de résidence", "adm.st.crFormatHint": "Jetons : {year} {seq} {seq3} {seq6} {prefix}. Ex. {year}-{seq3}/RTNY/PLRB/CNKDG/M/SG → 2026-084/RTNY/….",
   "adm.st.logo": "Logo officiel de la commune", "adm.st.logoHint": "PNG, JPEG ou WebP, 1 Mo maximum. N'importez que le logo officiel fourni par la mairie.", "adm.st.logoSave": "Enregistrer le logo",
   "adm.nav.payments": "Paiements", "adm.nav.sms": "SMS",
   "adm.err.self_approval": "Vous ne pouvez pas valider votre propre demande de remboursement.", "adm.err.price_unknown": "Aucun tarif défini.", "adm.err.payment_in_progress": "Un paiement est déjà en cours.", "adm.err.provider_disabled": "Moyen de paiement désactivé.",

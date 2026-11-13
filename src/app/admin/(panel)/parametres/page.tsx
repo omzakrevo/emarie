@@ -13,6 +13,6 @@ export default async function Page() {
   const c = m.contacts as { phone?: string; email?: string };
   return (<div className="flex flex-col gap-4"><h1 className="text-2xl font-bold text-brand-900">{t("adm.st.title")}</h1>
     <LogoForm currentUrl={m.logo_path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/municipality-logos/${m.logo_path}` : null} />
-    <SettingsForm v={{ about_mairie: String(get("public.about_mairie").fr ?? ""), about_commune: String(get("public.about_commune").fr ?? ""), opening_hours: String(get("public.opening_hours").fr ?? ""),
+    <SettingsForm v={{ signer_name: String(get("documents.signer_name").name ?? ""), cr_number_format: String(get("documents.number_format.CR").format ?? ""), about_mairie: String(get("public.about_mairie").fr ?? ""), about_commune: String(get("public.about_commune").fr ?? ""), opening_hours: String(get("public.opening_hours").fr ?? ""),
       address: m.address ?? "", phone: c.phone ?? "", email: c.email ?? "", skip_payment: get("workflow.skip_payment").enabled === true }} /></div>);
 }

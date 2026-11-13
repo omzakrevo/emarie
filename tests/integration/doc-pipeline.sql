@@ -12,7 +12,7 @@ insert into applications (id, municipality_id, service_id, status, reference, su
 insert into application_data values ('00000000-0000-0000-0000-00000000f001', (select v from _t where k='m'), '{"nom":"DECLARENOM","prenoms":"Declare","date_naissance":"2000-01-01","lieu_naissance":"LieuDeclare"}');
 insert into civil_registry_checks (municipality_id, application_id, outcome, registry_ref, registry_data, checked_by)
   values ((select v from _t where k='m'), '00000000-0000-0000-0000-00000000f001', 'found', 'REGREF-777',
-  '{"nom":"REGISTRENOM","prenoms":"Officiel","sexe":"F","date_naissance":"1999-12-31","lieu_naissance":"LieuRegistre","nom_pere":"Pere Registre"}', '00000000-0000-0000-0000-0000000000e1');
+  '{"nom":"REGISTRENOM","prenoms":"Officiel","sexe":"F","date_naissance":"1999-12-31","lieu_naissance":"LieuRegistre","nom_pere":"Pere Registre","date_acte":"2000-01-05"}', '00000000-0000-0000-0000-0000000000e1');
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000e1',true) \g /dev/null
 select 'JSON:' || prepare_document('00000000-0000-0000-0000-00000000f001')::text;

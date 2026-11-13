@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createAdminSupabase } from "@/lib/supabase/admin";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { dbErrorKey } from "@/features/admin/errors";
+import { validateNumberFormat } from "@/features/documents/number-format";
 import { getAdminContext, can } from "./context";
 
 export type ActionState = { ok?: boolean; message?: string; error?: string } | undefined;
@@ -34,7 +35,7 @@ export async function addNoteAction(_p: ActionState, form: FormData): Promise<Ac
   return { ok: true };
 }
 
-const REGISTRY_KEYS = ["nom", "prenoms", "sexe", "date_naissance", "heure_naissance", "lieu_naissance", "nom_pere", "nom_mere"] as const;
+const REGISTRY_KEYS = ["nom", "prenoms", "sexe", "date_naissance", "heure_naissance", "lieu_naissance", "nom_pere", "nom_mere", "date_acte"] as const;
 export async function registryCheckAction(_p: ActionState, form: FormData): Promise<ActionState> {
   const id = uuid.safeParse(form.get("applicationId"));
   const outcome = z.enum(["found", "not_found"]).safeParse(form.get("outcome"));
@@ -117,9 +118,10 @@ export async function setRolePermissionAction(roleId: string, permission: string
 const settingsSchema = z.object({
   about_mairie: z.string().max(5000), about_commune: z.string().max(5000), opening_hours: z.string().max(1000),
   address: z.string().max(300), phone: z.string().max(40), email: z.string().max(254),
+  signer_name: z.string().trim().max(120), cr_number_format: z.string().trim().max(60).refine((f) => f === "" || validateNumberFormat(f)),
 });
 export async function saveSettingsAction(_p: ActionState, form: FormData): Promise<ActionState> {
-  const parsed = settingsSchema.safeParse(Object.fromEntries(["about_mairie","about_commune","opening_hours","address","phone","email"].map((k) => [k, String(form.get(k) ?? "")])));
+  const parsed = settingsSchema.safeParse(Object.fromEntries(["about_mairie","about_commune","opening_hours","address","phone","email","signer_name","cr_number_format"].map((k) => [k, String(form.get(k) ?? "")])));
   if (!parsed.success) return { error: "adm.err.invalid_input" };
   const ctx = await getAdminContext();
   if (!can(ctx, "municipality.settings.manage")) return forbidden();
@@ -129,6 +131,8 @@ export async function saveSettingsAction(_p: ActionState, form: FormData): Promi
     { municipality_id: mid, key: "public.about_commune", value: { fr: d.about_commune } },
     { municipality_id: mid, key: "public.opening_hours", value: { fr: d.opening_hours } },
     { municipality_id: mid, key: "workflow.skip_payment", value: { enabled: form.get("skip_payment") === "on" } },
+    { municipality_id: mid, key: "documents.signer_name", value: { name: d.signer_name } },
+    ...(d.cr_number_format ? [{ municipality_id: mid, key: "documents.number_format.CR", value: { format: d.cr_number_format } }] : []),
   ];
   const a = await sb.from("municipality_settings").upsert(rows);
   const b = await sb.from("municipalities").update({ address: d.address || null, contacts: { phone: d.phone || undefined, email: d.email || undefined } }).eq("id", mid);

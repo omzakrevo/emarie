@@ -1,6 +1,12 @@
 # Phase 5 — Documents, impression, signature, retrait : rapport
 
-## ⚠ Modèles PROVISOIRES — `mode.pdf` n'a jamais été reçu
+## Modèles : reproduction de la structure du modèle officiel (`mode.pdf` reçu) — encore à valider
+> **Mise à jour.** Le modèle de référence a fini par être reçu et analysé (migration `0013`). Les deux documents reproduisent désormais sa **structure** : en-tête à tirets, devise, mention à gauche, lignes à points de conduite, date de naissance en toutes lettres + en chiffres + heure (`22h05'`), « Fils de / Et de », bandeau de titre du certificat, numéro `2026-084/RTNY/PLRB/CNKDG/M/SG` (format configurable), signataire « L'Officier de l'État Civil » avec son nom imprimé (réglage, jamais pré-rempli), cadres timbre communal / cachet / signature. **Aucune donnée personnelle, signature, cachet, timbre ni numéro de l'exemple n'est reproduit ni stocké** (le PDF n'est pas dans le dépôt).
+> Ils restent **provisoires** (filigrane SPÉCIMEN, mise à disposition bloquée) jusqu'à ce que la mairie confirme que la reproduction est conforme, puis publie en « version officielle ».
+>
+> Écarts connus avec l'original : emblème communal non reproduit (logo à téléverser) ; polices (DejaVu au lieu de Times/Candara) donc des retours à la ligne possibles sur la ligne de date en lettres ; en-têtes en capitales sans accents (REGION, LERABA) comme sur l'original ; « Monsieur/Madame » et « Fils/Fille de » déduits du sexe (l'original ne montre que le masculin) ; date en lettres en orthographe rectifiée (quatre-vingt-dix-huit) ; le positionnement exact du timbre/cachet (qui se chevauchent sur l'original) est simplifié en trois cadres ; le préfixe `RTNY/PLRB/CNKDG/M/SG` est relevé sur le modèle et **à confirmer**.
+
+## (Historique) Modèles provisoires avant réception de `mode.pdf`
 Les deux modèles (certificat de résidence, extrait de naissance) reprennent la **liste de champs du cahier des charges**, pas la mise en page réelle de la mairie.
 Les phrases juridiques sont marquées `[TEXTE PROVISOIRE]`. Garde-fous :
 - une version non validée est **publiée comme provisoire** : filigrane « SPÉCIMEN — MODÈLE NON VALIDÉ » sur le PDF ;

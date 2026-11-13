@@ -43,7 +43,7 @@ export function Editor({ versionId, v, placeholders, readOnly }: { versionId: st
       {d && <p className="rounded-xl bg-slate-100 p-3 text-sm">{t("adm.tpl.readOnly")}</p>}
       <p className="text-xs text-slate-600"><strong>{t("adm.tpl.fields")} :</strong> {placeholders.map((p) => <code key={p} className="mr-1 rounded bg-slate-100 px-1">{`{{${p}}}`}</code>)}</p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <L>{t("adm.tpl.f.title")}<input name="title" defaultValue={v.title} disabled={d} required className={input} /></L>
+        <L>{t("adm.tpl.f.title")}<textarea name="title" rows={2} defaultValue={v.title} disabled={d} required className={input} /></L>
         <L>{t("adm.tpl.f.mention")}<input name="mention" defaultValue={v.mention} disabled={d} className={input} /></L>
         <L>{t("adm.tpl.f.reference")}<input name="reference_line" defaultValue={v.reference_line} disabled={d} className={input} /></L>
         <label className="flex min-h-11 items-center gap-2 text-sm font-medium"><input type="checkbox" name="show_logo" defaultChecked={v.show_logo} disabled={d} className="h-5 w-5" />{t("adm.tpl.f.showLogo")}</label>

@@ -21,8 +21,8 @@ describe.skipIf(!url)("pipeline documentaire : SQL -> PDF", () => {
     const pdf = await renderPdf(renderDocumentHtml(v.content, prep.snapshot, { specimen: prep.is_specimen }));
     const f = join(mkdtempSync(join(tmpdir(), "emairie-int-")), "d.pdf"); writeFileSync(f, pdf);
     const text = execFileSync("pdftotext", ["-layout", f, "-"]).toString();
-    expect(text).toContain("REGISTRENOM"); expect(text).toContain("LieuRegistre"); expect(text).toContain("REGREF-777"); expect(text).toContain("31 décembre 1999");
-    expect(text).toContain("Commune Pipeline"); expect(text).toContain("EXTRAIT D'ACTE DE NAISSANCE");
+    expect(text).toContain("REGISTRENOM"); expect(text).toContain("LieuRegistre"); expect(text).toContain("REGREF-777"); expect(text).toContain("trente-et-un décembre mil neuf cent quatre-vingt-dix-neuf"); expect(text).toContain("(31/12/1999)"); expect(text).toContain("du 05/01/2000");
+    expect(text.toUpperCase()).toContain("COMMUNE DE COMMUNE PIPELINE"); expect(text).toContain("EXTRAIT"); expect(text).toContain("D'ACTE DE NAISSANCE");
     expect(text).not.toContain("DECLARENOM"); expect(text).not.toContain("LieuDeclare");
   }, 90_000);
 });

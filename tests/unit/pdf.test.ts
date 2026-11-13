@@ -12,8 +12,8 @@ import { renderPdf } from "@/server/documents/pdf";
 const chromiumPath = process.env.CHROMIUM_EXECUTABLE_PATH || "/opt/pw-browsers/chromium";
 const available = existsSync(chromiumPath);
 process.env.CHROMIUM_EXECUTABLE_PATH = chromiumPath; process.env.CHROMIUM_NO_SANDBOX = "1";
-const sql = readFileSync(join(process.cwd(), "supabase/migrations/0009_default_templates.sql"), "utf8");
-const seeds = [...sql.matchAll(/\$json\$([\s\S]*?)\$json\$/g)].map((m) => JSON.parse(m[1]));
+const sql = readFileSync(join(process.cwd(), "supabase/migrations/0013_official_model_layout.sql"), "utf8");
+const seeds = [...sql.matchAll(/\$json\$([\s\S]*?)\$json\$/g)].map((m) => JSON.parse(m[1])).reverse();
 const CODES: TemplateCode[] = ["certificat_residence", "extrait_naissance"];
 const dir = mkdtempSync(join(tmpdir(), "emairie-pdf-"));
 const content = (i: number) => { const v = validateContent(seeds[i], CODES[i]); if (!v.ok) throw new Error("seed"); return v.content; };
@@ -39,7 +39,7 @@ describe.skipIf(!available)("génération PDF réelle", () => {
     const size = meta.match(/Page size:\s+([\d.]+) x ([\d.]+)/)!; expect(Math.round(+size[1])).toBe(595); expect(Math.round(+size[2])).toBe(842);   // A4
     const t = text(f);
     expect(redPixels(f)).toBeGreaterThan(150);                                            // filigrane SPÉCIMEN présent
-    expect(t).toContain("NOMTEST"); expect(t).toMatch(/Région des/); expect(t).toContain(i === 0 ? "CERTIFICAT DE RÉSIDENCE" : "EXTRAIT D'ACTE DE NAISSANCE");
+    expect(t).toContain("NOMTEST"); expect(t).toMatch(/REGION DES/); expect(t.toUpperCase()).toContain(i === 0 ? "CERTIFICAT DE RÉSIDENCE" : "D'ACTE DE NAISSANCE"); expect(t).toContain("La Patrie");
     expect(t).toContain("Timbre communal"); expect(t).toContain("Cachet officiel");
   }, 60_000);
 
