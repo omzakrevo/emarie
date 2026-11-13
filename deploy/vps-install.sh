@@ -3,7 +3,7 @@
 # Usage : sudo DOMAIN=mairie.exemple.bf EMAIL=vous@exemple.bf bash deploy/vps-install.sh
 # Idempotent : relancer = mise à jour. Les secrets sont saisis ici, jamais écrits dans le dépôt.
 set -euo pipefail
-: "${DOMAIN:?DOMAIN requis (ex. mairie.exemple.bf)}"; : "${EMAIL:?EMAIL requis (Let's Encrypt)}"
+: "${DOMAIN:?DOMAIN requis (ex. mairie.exemple.bf)}"; : "${EMAIL:?EMAIL requis pour le certificat}"
 REPO="${REPO:-git@github.com:omzakrevo/emarie.git}"; BRANCH="${BRANCH:-main}"
 APP=emairie; DIR=/opt/emairie; ENVF=/etc/emairie.env; PORT=3000
 [ "$(id -u)" = 0 ] || { echo "Lancer en root (sudo)"; exit 1; }
