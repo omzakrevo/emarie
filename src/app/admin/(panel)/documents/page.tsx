@@ -28,8 +28,8 @@ export default async function Page({ searchParams }: PageProps<"/admin/documents
       <form method="get" className="flex gap-2"><input name="q" defaultValue={q} placeholder="NIA-2026-0000" aria-label={t("adm.filter.search")} className="min-h-11 rounded-lg border border-slate-300 bg-surface px-3 text-sm" />
         <button className="min-h-11 rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white">{t("adm.filter.apply")}</button></form>
       {GROUPS.map(([status, label]) => { const list = rows.filter((r) => r.status === status); return (
-        <section key={status} className="rounded-2xl bg-surface p-4 shadow-sm"><h2 className="mb-2 font-semibold">{t(label)} <span className="text-slate-500">({list.length})</span></h2>
-          {list.length === 0 ? <p className="text-sm text-slate-500">{t("adm.doc.queueEmpty")}</p> : (
+        <section key={status} className="rounded-2xl bg-surface p-4 shadow-sm"><h2 className="mb-2 font-semibold">{t(label)} <span className="text-slate-600">({list.length})</span></h2>
+          {list.length === 0 ? <p className="text-sm text-slate-600">{t("adm.doc.queueEmpty")}</p> : (
             <ul className="flex flex-col gap-1">{list.map((r) => (
               <li key={r.id}><Link href={`/admin/demandes/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 p-2 text-sm hover:border-brand-600">
                 <span className="font-mono font-semibold">{r.reference}</span><span>{nameOf(r)}</span><span className="text-slate-600">{pickLocalized(r.services?.name, locale)}</span>

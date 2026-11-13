@@ -12,6 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = { themeColor: "#17428a", width: "device-width", initialScale: 1 };
+
 export const metadata: Metadata = {
   title: "E-MAIRIE — La mairie, plus proche de vous",
   description: "Services administratifs en ligne de la mairie.",

@@ -1,0 +1,62 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+
+permissions: { contents: read }
+
+jobs:
+  checks:
+    name: Lint, types, tests unitaires, build, base de données
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Tests de la base (PostgreSQL jetable : le script vide les schémas public et auth)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres npm run test:db
+      - name: Audit des dépendances (production)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+  browser:
+    name: PDF réels, formulaire, accessibilité (Chromium)
+    runs-on: ubuntu-latest
+    needs: checks
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y -qq poppler-utils postgresql-client
+      - name: Tests PDF (Chromium) et intégration base -> PDF
+        run: |
+          export CHROMIUM_EXECUTABLE_PATH="$(node -e "console.log(require('playwright').chromium.executablePath())")"
+          export CHROMIUM_NO_SANDBOX=1
+          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres npm run test:db
+          TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres npx vitest run tests/unit/pdf.test.ts tests/integration
+      - name: Tests navigateur (formulaire, paiement, accessibilité, responsive)
+        run: |
+          E2E_HARNESS=1 npx next dev -p 3222 &
+          npx --yes wait-on http://localhost:3222/e2e-harness --timeout 120000
+          npm run test:e2e

@@ -26,3 +26,20 @@ describe("erreurs de la base", () => {
     expect(dbErrorKey(undefined)).toBe("adm.err.generic");
   });
 });
+
+import { mfaRequired } from "@/features/admin/mfa";
+describe("double authentification des agents", () => {
+  it("désactivée par défaut : jamais exigée", () => { expect(mfaRequired(undefined, "aal1")).toBe(false); expect(mfaRequired("0", "aal1")).toBe(false); });
+  it("activée : exigée tant que la session n'est pas aal2", () => {
+    expect(mfaRequired("1", "aal1")).toBe(true); expect(mfaRequired("1", null)).toBe(true); expect(mfaRequired("1", undefined)).toBe(true); expect(mfaRequired("1", "aal2")).toBe(false);
+  });
+});
+describe("politique de confidentialité et connexion", () => {
+  it("toutes les sections de la politique et les messages de connexion existent", () => {
+    for (let i = 1; i <= 7; i++) { expect(`privacy.s${i}.t` in fr).toBe(true); expect(`privacy.s${i}.b` in fr).toBe(true); }
+    for (const k of ["adm.login.invalid", "adm.login.title", "adm.mfa.title", "privacy.draftNotice", "wizard.privacyNote"]) expect(k in fr, k).toBe(true);
+  });
+  it("le texte type signale qu'il doit être validé et laisse les points légaux à compléter (rien d'inventé)", () => {
+    expect(fr["privacy.draftNotice"]).toMatch(/validé/); expect(fr["privacy.s5.b"]).toContain("[à compléter]"); expect(fr["privacy.s7.b"]).toContain("[Autorité");
+  });
+});

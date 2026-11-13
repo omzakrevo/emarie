@@ -10,9 +10,12 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:db": "scripts/test-db.sh",
-    "test:e2e": "node tests/e2e/wizard.e2e.cjs && node tests/e2e/wizard-pay.e2e.cjs",
+    "test:e2e": "node tests/e2e/wizard.e2e.cjs && node tests/e2e/wizard-pay.e2e.cjs && node tests/e2e/a11y-responsive.e2e.cjs",
     "test:integration": "TEST_DATABASE_URL=\"${TEST_DATABASE_URL:?base jetable requise}\" vitest run tests/integration",
-    "check:env": "node scripts/check-env.mjs"
+    "check:env": "node scripts/check-env.mjs",
+    "i18n:sheet": "tsx scripts/i18n-sheet.ts",
+    "i18n:coverage": "tsx scripts/i18n-coverage.ts",
+    "i18n:import": "tsx scripts/i18n-import.ts"
   },
   "dependencies": {
     "@sparticuz/chromium": "^153.0.0",
@@ -26,13 +29,16 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "playwright": "^1.63.0",
     "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.1.0"
   }

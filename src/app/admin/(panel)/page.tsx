@@ -42,7 +42,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/admin">) {
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {CARDS.map(([k, label]) => (
           <div key={k} className="rounded-2xl bg-surface p-4 shadow-sm"><p className="text-sm text-slate-600">{t(label)}</p><p className="text-3xl font-bold text-brand-900" data-testid={`stat-${k}`}>{sum[k]}</p></div>))}
-        <div className="rounded-2xl bg-surface p-4 shadow-sm"><p className="text-sm text-slate-600">{t("adm.stat.payments")}</p><p className="text-sm font-medium text-slate-500">{t("adm.stat.paymentsPending")}</p></div>
+        <div className="rounded-2xl bg-surface p-4 shadow-sm"><p className="text-sm text-slate-600">{t("adm.stat.payments")}</p><p className="text-sm font-medium text-slate-600">{t("adm.stat.paymentsPending")}</p></div>
       </section>
       <section className="rounded-2xl bg-surface p-5 shadow-sm"><h2 className="mb-3 font-semibold">{t("adm.stat.byService")}</h2>
         <ul className="flex flex-col gap-3">{byService.map((s) => (

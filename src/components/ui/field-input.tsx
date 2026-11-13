@@ -45,7 +45,7 @@ export function FieldInput({ def, value, error, onChange }: { def: FieldDef; val
     <div className="flex flex-col gap-1.5">
       <label id={`${id}-label`} htmlFor={def.type === "radio" ? undefined : id} className="text-sm font-medium">
         {label}{" "}
-        <span className="font-normal text-slate-500">({def.required ? t("common.required") : t("common.optional")})</span>
+        <span className="font-normal text-slate-600">({def.required ? t("common.required") : t("common.optional")})</span>
       </label>
       {control}
       {help && !error && <p id={`${id}-help`} className="text-sm text-slate-600">{help}</p>}

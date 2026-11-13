@@ -49,6 +49,20 @@ export const fr = {
   "wizard.payErr.provider_unavailable": "Ce moyen de paiement n'est pas disponible.", "wizard.payErr.invalid_phone": "Numéro de téléphone invalide.", "wizard.payErr.price_unknown": "Le tarif n'est pas encore défini par la mairie.",
   "wizard.payErr.payment_in_progress": "Un paiement est déjà en cours pour cette demande.", "wizard.payErr.not_payable": "Cette demande ne peut pas être payée dans son état actuel.",
   "wizard.payErr.provider_error": "Le service de paiement est indisponible. Réessayez dans un instant.", "wizard.payErr.denied": "Accès refusé.", "wizard.payErr.rate_limited": "Trop de tentatives. Réessayez plus tard.",
+  "adm.login.title": "Espace agents", "adm.login.email": "Adresse e-mail", "adm.login.password": "Mot de passe", "adm.login.submit": "Se connecter", "adm.login.loading": "Connexion…",
+  "adm.login.invalid": "Identifiants invalides.", "adm.login.forbidden": "Ce compte n'a pas accès à cette mairie.",
+  "adm.mfa.title": "Double authentification", "adm.mfa.scan": "Scannez ce code avec une application d'authentification (Google Authenticator, Microsoft Authenticator…), puis saisissez le code à 6 chiffres.",
+  "adm.mfa.qrAlt": "Code QR de double authentification", "adm.mfa.manual": "Ou saisissez cette clé :", "adm.mfa.code": "Code à 6 chiffres", "adm.mfa.verify": "Valider",
+  "adm.mfa.badCode": "Code incorrect.", "adm.mfa.error": "Double authentification indisponible. Réessayez.",
+  "privacy.title": "Politique de confidentialité", "privacy.link": "Confidentialité", "wizard.privacyNote": "Vos informations servent uniquement à traiter votre demande. Voir la politique de confidentialité.",
+  "privacy.draftNotice": "Texte type fourni avec l'application : il doit être relu, complété et validé par la mairie et les autorités compétentes avant toute utilisation.",
+  "privacy.s1.t": "Qui traite vos données ?", "privacy.s1.b": "La mairie de {name} est responsable du traitement des données collectées sur ce service.",
+  "privacy.s2.t": "Quelles données ?", "privacy.s2.b": "Identité (nom, prénoms, sexe, date et lieu de naissance, filiation), coordonnées (téléphone), pièces justificatives que vous téléversez, informations de paiement (opérateur, montant, référence ; jamais votre code secret), messages SMS de suivi.",
+  "privacy.s3.t": "Pourquoi ?", "privacy.s3.b": "Instruire votre demande, vérifier votre identité, encaisser les frais, établir et délivrer le document, vous informer de l'avancement.",
+  "privacy.s4.t": "Qui y accède ?", "privacy.s4.b": "Les agents habilités de la mairie, dans la limite de leurs fonctions. Chaque consultation de dossier et chaque téléchargement de pièce sont enregistrés. Les prestataires de paiement et de SMS ne reçoivent que ce qui est nécessaire à leur service.",
+  "privacy.s5.t": "Combien de temps ?", "privacy.s5.b": "Les brouillons non déposés sont supprimés automatiquement après 30 jours. La durée de conservation des dossiers déposés est fixée par la mairie conformément à la réglementation : [à compléter].",
+  "privacy.s6.t": "Sécurité", "privacy.s6.b": "Pièces et documents stockés dans un espace privé, accès par liens temporaires, contrôle des droits de chaque agent, séparation stricte entre les communes.",
+  "privacy.s7.t": "Vos droits", "privacy.s7.b": "Accès, rectification et, dans les cas prévus par la loi, opposition ou effacement : adressez-vous à la mairie. [Autorité de protection des données et procédure : à compléter.]",
   "upload.title": "Téléversement des documents", "upload.camera": "Prendre une photo", "upload.choose": "Choisir un fichier",
   "upload.hint": "PDF, JPG, PNG ou WebP. {max} Mo maximum par fichier.", "upload.uploading": "Envoi…",
   "upload.failed": "Envoi impossible", "upload.tooBig": "Fichier trop volumineux", "upload.badType": "Type de fichier non accepté",
@@ -177,9 +191,12 @@ export type MessageKey = keyof typeof fr;
 export type Locale = "fr" | "dyu";
 export const LOCALES: Locale[] = ["fr", "dyu"];
 
-export const dyu: Partial<Record<MessageKey, string>> = {
-  "common.yes": "Awɔ", "common.no": "Ayi",
-};
+import dyuFile from "./dyu.json";
+
+/** Traductions dioula (fichier `dyu.json`). Squelette NON validé : voir `meta.validatedBy`. Clé absente -> français. */
+export const dyu = dyuFile.messages as Partial<Record<MessageKey, string>>;
+/** Vrai seulement lorsqu'un locuteur compétent a validé le fichier (renseigner meta.validatedBy/validatedAt). */
+export const dyuValidated = Boolean(dyuFile.meta.validatedBy && dyuFile.meta.validatedAt);
 
 export function messagesFor(locale: Locale): Record<MessageKey, string> {
   return locale === "dyu" ? { ...fr, ...dyu } : { ...fr };

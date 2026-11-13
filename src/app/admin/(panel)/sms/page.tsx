@@ -21,7 +21,7 @@ export default async function Page() {
     <div className="flex flex-col gap-5"><h1 className="text-2xl font-bold text-brand-900">{t("adm.sms.title")}</h1>
       <p role="alert" data-testid="sms-mode" className="rounded-xl bg-red-50 p-3 text-sm font-bold text-red-800">{mode === "test" ? t("adm.sms.modeTest") : !provider ? t("adm.sms.modeLiveNone") : "LIVE"}</p>
       <ProcessNow />
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sms.templates")}</h2><p className="mb-1 text-xs text-slate-500">{t("adm.sms.templatesHint")}</p><p className="mb-3 text-xs text-slate-500">{t("adm.sms.dyuHint")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sms.templates")}</h2><p className="mb-1 text-xs text-slate-600">{t("adm.sms.templatesHint")}</p><p className="mb-3 text-xs text-slate-600">{t("adm.sms.dyuHint")}</p>
         <div className="flex flex-col gap-2">{(tpls ?? []).map((x) => <TemplateForm key={x.id} id={x.id} label={t(`adm.sms.e.${x.event}` as MessageKey)} body={x.body} active={x.is_active} />)}</div></section>
       <section className={card}><h2 className="mb-2 font-semibold">{t("adm.sms.history")}</h2>
         {!hist?.length ? <p className="text-sm text-slate-600">{t("adm.sms.none")}</p> : (

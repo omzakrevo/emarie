@@ -5,6 +5,7 @@ import { getT } from "@/i18n/server";
 import { pickLocalized } from "@/i18n/messages";
 import { visibleFields } from "@/features/demande/fields";
 import type { FieldDef } from "@/features/demande/types";
+import { auditView } from "@/server/admin/audit";
 import { can, getAdminContext, requireCan } from "@/server/admin/context";
 import { DocumentPanel } from "@/components/admin/document-panel";
 import { NoteForm, RegistryForm, TransitionForm } from "./forms";
@@ -21,6 +22,7 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
   // Toutes ces lectures passent par la RLS : un dossier d'une autre commune est simplement introuvable.
   const { data: app } = await sb.from("applications").select("id, reference, status, submitted_at, contact_phone, service_id, services(code, name)").eq("id", id).eq("municipality_id", mid).maybeSingle();
   if (!app) notFound();
+  await auditView(mid, ctx.userId, "application", id);   // consultation d'un dossier : tracée
   const service = app.services as unknown as { code: string; name: Record<string, string> };
   const [{ data: dataRow }, { data: fieldRows }, { data: files }, { data: events }, { data: notes }, { data: transitions }, { data: checks }, { data: skip }] = await Promise.all([
     sb.from("application_data").select("data").eq("application_id", id).maybeSingle(),
@@ -47,7 +49,7 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
         <p className="mt-2 inline-block rounded-full bg-brand-50 px-3 py-1 font-medium text-brand-900" data-testid="status">{t(`status.${app.status}` as never)}</p>
       </header>
 
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.d.applicant")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.d.declared")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.d.applicant")}</h2><p className="mb-3 text-xs text-slate-600">{t("adm.d.declared")}</p>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
           {visibleFields(fields, data).map((f) => { const v = data[f.key]; const opt = f.options?.find((o) => o.value === v);
             return <div key={f.key} className="contents"><dt className="text-slate-600">{pickLocalized(f.label, locale)}</dt><dd className="font-medium">{v ? (opt ? pickLocalized(opt.label, locale) : v) : "—"}</dd></div>; })}
@@ -56,7 +58,7 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
       <section className={card}><h2 className="mb-2 font-semibold">{t("adm.d.files")}</h2>
         {!files?.length ? <p className="text-sm text-slate-600">{t("adm.d.noFiles")}</p> :
           <ul className="flex flex-col gap-2 text-sm">{files.map((f) => (
-            <li key={f.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-2"><span className="truncate">{f.original_name} <span className="text-slate-500">({(f.size_bytes / 1024).toFixed(0)} Ko)</span></span>
+            <li key={f.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-2"><span className="truncate">{f.original_name} <span className="text-slate-600">({(f.size_bytes / 1024).toFixed(0)} Ko)</span></span>
               <a href={`/api/admin/files/${f.id}`} target="_blank" rel="noreferrer" className="shrink-0 font-semibold text-brand-700 underline">{t("adm.d.download")}</a></li>))}</ul>}
       </section>
 
@@ -73,14 +75,14 @@ export default async function Page({ params }: PageProps<"/admin/demandes/[id]">
 
       <DocumentPanel ctx={ctx} applicationId={id} status={app.status} />
 
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.d.notes")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.d.notesHint")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.d.notes")}</h2><p className="mb-3 text-xs text-slate-600">{t("adm.d.notesHint")}</p>
         <ul className="mb-3 flex flex-col gap-2 text-sm">{(notes ?? []).map((n) => (
-          <li key={n.id} className="rounded-xl bg-slate-50 p-2"><p>{n.body}</p><p className="text-xs text-slate-500">{(n.profiles as unknown as { full_name: string | null } | null)?.full_name ?? "—"} · {new Date(n.created_at).toLocaleString("fr-FR")}</p></li>))}</ul>
+          <li key={n.id} className="rounded-xl bg-slate-50 p-2"><p>{n.body}</p><p className="text-xs text-slate-600">{(n.profiles as unknown as { full_name: string | null } | null)?.full_name ?? "—"} · {new Date(n.created_at).toLocaleString("fr-FR")}</p></li>))}</ul>
         {can(ctx, "applications.review") && <NoteForm applicationId={id} />}</section>
 
       <section className={card}><h2 className="mb-2 font-semibold">{t("adm.d.history")}</h2>
         <ol className="flex flex-col gap-2 text-sm">{(events ?? []).map((e, i) => (
-          <li key={i} className="border-l-2 border-accent-600 pl-3"><span className="font-medium">{t(`status.${e.to_status}` as never)}</span> <span className="text-slate-500">({e.actor_type}) {new Date(e.created_at).toLocaleString("fr-FR")}</span>
+          <li key={i} className="border-l-2 border-accent-600 pl-3"><span className="font-medium">{t(`status.${e.to_status}` as never)}</span> <span className="text-slate-600">({e.actor_type}) {new Date(e.created_at).toLocaleString("fr-FR")}</span>
             {e.public_note && <p className="text-slate-700">{e.public_note}</p>}</li>))}</ol></section>
     </div>
   );

@@ -29,14 +29,14 @@ export default async function Page({ params }: PageProps<"/admin/services/[code]
       <ServiceForm id={s.id} description={fr(s.description)} procedure={fr(s.procedure)} delay={s.indicative_delay_days} active={s.is_active} canEdit={canSvc} />
       <section className={card}><h2 className="mb-2 font-semibold">{t("adm.sv.pricing")}</h2>
         <p className="mb-1 text-sm" data-testid="current-price"><strong>{t("adm.sv.currentPrice")} :</strong> {cur ? `${cur.amount_xof.toLocaleString("fr-FR")} FCFA` : t("adm.sv.noPrice")}</p>
-        {canPrice && (<><p className="mb-3 text-xs text-slate-500">{t("adm.sv.priceNote")}</p><PriceForm id={s.id} today={today} /></>)}
+        {canPrice && (<><p className="mb-3 text-xs text-slate-600">{t("adm.sv.priceNote")}</p><PriceForm id={s.id} today={today} /></>)}
         {!!prices?.length && <><h3 className="mb-1 mt-4 text-sm font-semibold">{t("adm.sv.history")}</h3><ul className="text-sm text-slate-700">{prices.map((p) => <li key={p.id}>{p.amount_xof.toLocaleString("fr-FR")} FCFA — {p.valid_from}{p.valid_to ? ` ${t("adm.sv.until")} ${p.valid_to}` : ""}</li>)}</ul></>}
       </section>
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sv.documents")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.sv.documentsNote")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sv.documents")}</h2><p className="mb-3 text-xs text-slate-600">{t("adm.sv.documentsNote")}</p>
         <div className="flex flex-col gap-2">{!docs?.length && <p className="text-sm text-slate-600">{t("adm.sv.noDocuments")}</p>}
           {docs?.map((d) => <DocumentRow key={d.id} serviceId={s.id} id={d.id} label={fr(d.label)} required={d.required} max={d.max_size_kb} canEdit={canSvc} />)}
           {canSvc && <DocumentRow serviceId={s.id} label="" required={true} max={5120} canEdit />}</div></section>
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sv.fields")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.sv.fieldsNote")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.sv.fields")}</h2><p className="mb-3 text-xs text-slate-600">{t("adm.sv.fieldsNote")}</p>
         <div className="flex flex-col gap-2">{fields?.map((f) => <FieldRow key={f.id} id={f.id} label={fr(f.label)} help={fr(f.help)} required={f.required} step={f.step} type={f.type} canEdit={canSvc} />)}</div></section>
     </div>);
 }

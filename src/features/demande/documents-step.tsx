@@ -49,7 +49,7 @@ export function DocumentsStep({ docs, files, onFiles, actions, missing }: {
         return (
           <section key={doc.key} aria-labelledby={`doc-${doc.key}`} className={`rounded-2xl border p-4 ${isMissing ? "border-red-400 bg-red-50" : "border-slate-200 bg-surface"}`}>
             <h3 id={`doc-${doc.key}`} className="font-semibold">
-              {pickLocalized(doc.label, locale)} <span className="text-sm font-normal text-slate-500">({doc.required ? t("common.required") : t("common.optional")})</span>
+              {pickLocalized(doc.label, locale)} <span className="text-sm font-normal text-slate-600">({doc.required ? t("common.required") : t("common.optional")})</span>
             </h3>
             <p className="text-sm text-slate-600">{t("upload.hint", { max: (doc.max_size_kb / 1024).toFixed(0) })}</p>
             {isMissing && <p role="alert" className="mt-1 text-sm font-medium text-red-700">{t("upload.missing")}</p>}
@@ -61,10 +61,10 @@ export function DocumentsStep({ docs, files, onFiles, actions, missing }: {
                     {f.mime_type.startsWith("image/")
                       // eslint-disable-next-line @next/next/no-img-element
                       ? <img src={src} alt={f.original_name} className="h-14 w-14 rounded-lg object-cover" />
-                      : <a href={src} target="_blank" rel="noreferrer" className="flex h-14 w-14 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><Icon name="file-text" /></a>}
+                      : <a href={src} target="_blank" rel="noreferrer" aria-label={f.original_name} className="flex h-14 w-14 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><Icon name="file-text" /></a>}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{f.original_name}</p>
-                      <p className="text-xs text-slate-500">{(f.size_bytes / 1024).toFixed(0)} Ko</p>
+                      <p className="text-xs text-slate-600">{(f.size_bytes / 1024).toFixed(0)} Ko</p>
                     </div>
                     <button type="button" onClick={() => remove(f)} className="flex min-h-12 min-w-12 items-center justify-center rounded-lg text-red-700 hover:bg-red-50" aria-label={`${t("common.delete")} ${f.original_name}`}>
                       <Icon name="trash" />

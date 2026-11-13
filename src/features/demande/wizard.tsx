@@ -199,7 +199,7 @@ export function Wizard({ services, initial, actions, preselect, payOptions = [] 
             {step === 2 && isCivil && <p className="rounded-xl bg-brand-50 p-3 text-sm">{t("wizard.civilNotice")}</p>}
             {visibleFields(service.fields, data, step).length === 0 && <p className="text-slate-600">{t("wizard.noExtra")}</p>}
             {visibleFields(service.fields, data, step).map((f) => <FieldInput key={f.key} def={f} value={data[f.key] ?? ""} error={errors[f.key]} onChange={(v) => set(f.key, v)} />)}
-            <p className="text-xs text-slate-500" aria-live="polite">
+            <p className="text-xs text-slate-600" aria-live="polite">
               {saveState === "saving" ? t("wizard.saving") : saveState === "saved" ? t("wizard.saved") : saveState === "failed" ? t("wizard.saveFailed") : t("wizard.resumeHint")}
             </p>
           </div>)}
@@ -226,6 +226,7 @@ export function Wizard({ services, initial, actions, preselect, payOptions = [] 
               {files.length === 0 ? <p className="text-sm text-slate-600">{t("service.noDocuments")}</p> : <ul className="list-disc pl-5 text-sm">{files.map((f) => <li key={f.id}>{f.original_name}</li>)}</ul>}
             </section>
             <p className="rounded-xl bg-brand-50 p-3 text-sm">{t("wizard.declared")}</p>
+            <p className="text-xs text-slate-600">{t("wizard.privacyNote")} <a href="/confidentialite" target="_blank" rel="noreferrer" className="underline">{t("privacy.link")}</a></p>
           </div>)}
 
         {service && step === 6 && (

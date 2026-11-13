@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { mfaRequired } from "@/features/admin/mfa";
 import { getCurrentMunicipality } from "@/server/tenancy";
 
 export interface AdminContext {
@@ -14,6 +15,10 @@ export const getAdminContext = cache(async (): Promise<AdminContext> => {
   const sb = await createServerSupabase();
   const { data: u } = await sb.auth.getUser();
   if (!u.user) redirect("/admin/connexion");
+  if (process.env.REQUIRE_AGENT_MFA === "1") {
+    const { data: aal } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (mfaRequired(process.env.REQUIRE_AGENT_MFA, aal?.currentLevel)) redirect("/admin/mfa");
+  }
   const municipality = await getCurrentMunicipality();
   const [{ data: perms }, { data: member }] = await Promise.all([
     sb.rpc("my_permissions", { p_municipality: municipality.id }),

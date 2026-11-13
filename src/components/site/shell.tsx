@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
-import { messagesFor } from "@/i18n/messages";
+import { dyuValidated, messagesFor } from "@/i18n/messages";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { getCurrentMunicipality } from "@/server/tenancy";
@@ -39,10 +39,10 @@ export async function SiteShell({ children }: { children: ReactNode }) {
           </ul>
         </nav>
       </header>
-      {locale === "dyu" && <p role="note" className="bg-amber-50 px-4 py-2 text-center text-sm text-amber-900">{t("i18n.dyuNotice")}</p>}
+      {locale === "dyu" && !dyuValidated && <p role="note" className="bg-amber-50 px-4 py-2 text-center text-sm text-amber-900">{t("i18n.dyuNotice")}</p>}
       <div className="mx-auto max-w-5xl px-4 py-6">{children}</div>
       <footer className="mt-8 border-t border-slate-200 py-6 text-center text-sm text-slate-600">
-        {t("app.name")} — {t("app.slogan")}
+        {t("app.name")} — {t("app.slogan")} · <Link href="/confidentialite" className="underline">{t("privacy.link")}</Link>
       </footer>
     </I18nProvider>
   );

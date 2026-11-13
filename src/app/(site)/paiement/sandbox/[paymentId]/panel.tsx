@@ -16,7 +16,7 @@ export function SandboxPanel({ paymentId }: { paymentId: string }) {
       <Button disabled={busy} variant="secondary" onClick={() => decide("CANCELLED")}>Simuler : annulé par l&apos;utilisateur</Button>
       <Button disabled={busy} variant="ghost" onClick={() => decide("WRONG_AMOUNT")}>Simuler : montant discordant (à revoir)</Button>
       {msg && <p role="status" className="text-sm font-medium">{msg}</p>}
-      <p className="text-xs text-slate-500">Revenez ensuite sur l&apos;onglet de votre demande : le statut se met à jour automatiquement.</p>
+      <p className="text-xs text-slate-600">Revenez ensuite sur l&apos;onglet de votre demande : le statut se met à jour automatiquement.</p>
     </div>
   );
 }

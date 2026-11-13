@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "language": "dyu",
+    "validatedBy": null,
+    "validatedAt": null,
+    "note": "Traductions NON validées tant que validatedBy est vide : à faire relire par un locuteur compétent. Toute clé absente retombe sur le français."
+  },
+  "messages": {
+    "common.yes": "Awɔ",
+    "common.no": "Ayi"
+  }
+}

@@ -14,7 +14,7 @@ export default async function Page() {
         <ul className="flex flex-col gap-4">{data.map((a) => (
           <li key={a.id} className="rounded-2xl bg-surface p-5 shadow-sm">
             <h2 className="font-semibold">{pickLocalized(a.title as Record<string, string>, locale)}</h2>
-            {a.published_at && <time className="text-xs text-slate-500" dateTime={a.published_at}>{new Date(a.published_at).toLocaleDateString("fr-FR")}</time>}
+            {a.published_at && <time className="text-xs text-slate-600" dateTime={a.published_at}>{new Date(a.published_at).toLocaleDateString("fr-FR")}</time>}
             <p className="mt-2 whitespace-pre-line text-sm">{pickLocalized(a.body as Record<string, string>, locale)}</p>
           </li>))}</ul>}
     </div>);

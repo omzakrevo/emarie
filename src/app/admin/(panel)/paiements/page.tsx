@@ -53,7 +53,7 @@ export default async function Page({ searchParams }: PageProps<"/admin/paiements
               <td className="p-2">{t(`adm.pay.ps.${r.status}` as MessageKey)}{r.needs_review && <span className="ml-1 rounded bg-amber-100 px-1 text-xs font-bold text-amber-900">{t("adm.pay.review")}</span>}</td>
               <td className="p-2">{rc(r)?.pdf_sha256 ? <a className="font-semibold text-brand-700 underline" href={`/api/admin/receipts/${rc(r)!.id}`} target="_blank" rel="noreferrer">PDF</a> : "—"}</td></tr>))}</tbody></table></div>)}</section>
 
-      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.pay.refunds")}</h2><p className="mb-3 text-xs text-slate-500">{t("adm.pay.refundHint")}</p>
+      <section className={card}><h2 className="mb-1 font-semibold">{t("adm.pay.refunds")}</h2><p className="mb-3 text-xs text-slate-600">{t("adm.pay.refundHint")}</p>
         {can(ctx, "payments.refund") && <RefundRequestForm payments={rows.filter((r) => r.status === "PAID" && r.mode === "live").map((r) => ({ id: r.id, label: `${r.applications?.reference} — ${fcfa(r.amount_xof)}` }))} />}
         {!refunds?.length ? <p className="mt-3 text-sm text-slate-600">{t("adm.pay.refundNone")}</p> : <ul className="mt-3 flex flex-col gap-2 text-sm">{refunds.map((r) => (
           <li key={r.id} className="rounded-xl border border-slate-200 p-3"><span className="font-semibold">{fcfa(r.amount_xof)}</span> — {r.reason} · <span className="font-medium">{t(`adm.pay.rs.${r.status}` as MessageKey)}</span>{r.provider_reference ? ` (${r.provider_reference})` : ""}

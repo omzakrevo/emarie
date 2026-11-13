@@ -27,7 +27,7 @@ export function RoleMatrix({ roles, permissions, granted, mine }: Props) {
         <table className="w-full text-left text-sm">
           <thead><tr className="border-b border-slate-200"><th className="p-3">&nbsp;</th>{roles.map((r) => <th key={r.id} className="p-3 font-semibold">{r.label}</th>)}</tr></thead>
           <tbody>{permissions.map((p) => (
-            <tr key={p.code} className="border-b border-slate-100"><th scope="row" className="p-3 font-normal"><span className="block font-medium">{p.description}</span><span className="font-mono text-xs text-slate-500">{p.code}</span></th>
+            <tr key={p.code} className="border-b border-slate-100"><th scope="row" className="p-3 font-normal"><span className="block font-medium">{p.description}</span><span className="font-mono text-xs text-slate-600">{p.code}</span></th>
               {roles.map((r) => {
                 const locked = r.code === "admin_commune" || !mine.includes(p.code);
                 return <td key={r.id} className="p-3"><input type="checkbox" className="h-5 w-5 accent-brand-700" checked={set.has(key(r.id, p.code))} disabled={locked || pending}

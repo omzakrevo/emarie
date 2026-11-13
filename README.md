@@ -38,3 +38,10 @@ La commune est déterminée par le sous-domaine (`<slug>.<NEXT_PUBLIC_ROOT_DOMAI
 - La clé `SUPABASE_SERVICE_ROLE_KEY` n'est lue que dans `src/lib/supabase/admin.ts` (`server-only`).
 - `next_reference()` et `seed_default_roles()` ne sont pas appelables par les utilisateurs.
 - Limitation des tentatives de connexion : seule la limite native de Supabase Auth s'applique pour l'instant ; un contrôle applicatif est prévu en Phase 7.
+
+## Documentation (Phase 7)
+`docs/DATABASE.md` · `docs/API.md` · `docs/SECURITY.md` · `docs/RETENTION.md` · `docs/LEGAL-VALIDATION.md` · `docs/USER-GUIDE.md` · `docs/DEPLOYMENT.md` · `docs/PHASE7-RAPPORT.md`
+
+- **Dioula** : `npm run i18n:sheet` (feuille à faire relire), `npm run i18n:import` (importe uniquement les lignes validées), `npm run i18n:coverage`.
+- **Purge** : `/api/cron/purge` (protégé par `CRON_SECRET`). **MFA agents** : `REQUIRE_AGENT_MFA=1`. **PWA** : `src/app/manifest.ts`.
+- **CI** : `.github/workflows/ci.yml` (lint, types, tests, build, base, navigateur).

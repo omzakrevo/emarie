@@ -31,7 +31,7 @@ export function TrackForm() {
             {state.result.events.map((e, i) => (
               <li key={i} className="border-l-2 border-accent-600 pl-3">
                 <span className="font-medium">{t(`status.${e.to_status}` as never)}</span>{" "}
-                <time className="text-slate-500" dateTime={e.created_at}>{new Date(e.created_at).toLocaleString("fr-FR")}</time>
+                <time className="text-slate-600" dateTime={e.created_at}>{new Date(e.created_at).toLocaleString("fr-FR")}</time>
                 {e.public_note && <p className="text-slate-700"><span className="font-medium">{t("track.note")} : </span>{e.public_note}</p>}
               </li>))}
           </ol>

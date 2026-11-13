@@ -47,7 +47,7 @@ export default async function Page({ searchParams }: PageProps<"/admin/demandes"
           <li key={r.id}><Link href={`/admin/demandes/${r.id}`} className="grid grid-cols-1 gap-1 rounded-xl border border-slate-200 bg-surface p-3 text-sm hover:border-brand-600 sm:grid-cols-[10rem_1fr_1fr_12rem_8rem] sm:items-center">
             <span className="font-mono font-semibold">{r.reference}</span><span>{nameOf(r)}</span><span className="text-slate-600">{pickLocalized(r.services?.name, locale)}</span>
             <span className="w-fit rounded-full bg-brand-50 px-3 py-1 font-medium text-brand-900">{t(`status.${r.status}` as never)}</span>
-            <time className="text-slate-500" dateTime={r.submitted_at}>{new Date(r.submitted_at).toLocaleDateString("fr-FR")}</time></Link></li>))}</ul>)}
+            <time className="text-slate-600" dateTime={r.submitted_at}>{new Date(r.submitted_at).toLocaleDateString("fr-FR")}</time></Link></li>))}</ul>)}
       <nav className="flex items-center justify-between text-sm" aria-label="Pagination">
         {page > 1 ? <Link className="font-semibold text-brand-700 underline" href={qs(page - 1)}>{t("adm.req.prev")}</Link> : <span />}
         <span>{t("adm.req.page", { n: `${page}/${pages}` })}</span>
