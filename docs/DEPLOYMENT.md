@@ -3,9 +3,9 @@
 ## État au dernier point
 | Élément | État |
 |---|---|
-| Code | Prêt, testé hors Supabase (voir rapports de phase) — **commit local uniquement** (aucun dépôt distant configuré) |
-| Base Supabase | **Non créée** : la limite de 2 projets gratuits actifs du compte est atteinte. Libérer une place (pause/suppression d'un projet inutile) ou passer à l'offre payante, puis créer le projet « e-mairie » (région conseillée : `eu-west-3`, Paris) |
-| Vercel | Équipe disponible ; **aucun projet E-MAIRIE créé** |
+| Code | Prêt, testé hors Supabase (voir rapports de phase) — poussé sur GitHub `omzakrevo/emarie` (voir `VERCEL-DEPLOY.md`) |
+| Base Supabase | Créée (`cvvsophhludwjldesqbu`), migrations 0001→0014 appliquées
+| Vercel | Projet `e-mairie` créé, sans déploiement |
 | Génération PDF en serverless | Prise en charge `PDF_CHROMIUM=sparticuz` **testée localement** (Chromium 153 embarqué) ; **non testée sur Vercel** |
 
 ## 1. Base de données (Supabase)
