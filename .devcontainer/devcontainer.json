@@ -1,0 +1,34 @@
+{
+  "name": "E-MAIRIE (préproduction GitHub Codespaces)",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  },
+  "containerEnv": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://cvvsophhludwjldesqbu.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnNvcGhobHVkd2psZGVzcWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0NDcxNDYsImV4cCI6MjExMDAyMzE0Nn0.bMsycyLJSsbBdXbYO8Bwt7ovdVXAdfKXsTPRSiXPjH4",
+    "NEXT_PUBLIC_ROOT_DOMAIN": "localhost",
+    "NEXT_PUBLIC_DEFAULT_MUNICIPALITY": "niankorodougou",
+    "PAYMENT_MODE": "sandbox",
+    "SMS_MODE": "test",
+    "PDF_CHROMIUM": "sparticuz",
+    "REQUIRE_AGENT_MFA": "0"
+  },
+  "secrets": {
+    "SUPABASE_SERVICE_ROLE_KEY": {
+      "description": "Clé service_role du projet Supabase (Project Settings > API Keys). Serveur uniquement."
+    }
+  },
+  "forwardPorts": [
+    3000
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "E-MAIRIE",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start.sh"
+}
