@@ -61,3 +61,17 @@
   Une installation neuve à partir des fichiers du dépôt reste valide (les `DROP` y sont sans problème).
 - Contrôle de sécurité (advisors) : 0 alerte critique ; restent des avis volontaires (tables réservées au serveur ; fonctions d'agent qui vérifient les droits en interne).
 - **Clé `service_role`** : non récupérable par l'outil, à ajouter par vous dans les variables d'environnement Vercel (jamais dans une conversation ni un fichier).
+
+## Journal du déploiement Vercel (projet `e-mairie`, id `prj_IT2cImILnSvA3A5DbGMcMZwSsdm3`, équipe `omzakrevo-2218s-projects`)
+- Projet créé (Next.js, fonctions en `cdg1`/Paris), **aucun déploiement** : le code n'a pas été envoyé (pas de dépôt Git distant ; l'outil n'accepte que des fichiers inlinés, impraticable pour 188 fichiers).
+- Variables **déjà posées** (non secrètes) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clé publique), `NEXT_PUBLIC_DEFAULT_MUNICIPALITY`, `NEXT_PUBLIC_ROOT_DOMAIN` (valeur factice : à remplacer par votre domaine), `PAYMENT_MODE=sandbox`, `SMS_MODE=test`, `PDF_CHROMIUM=sparticuz`.
+- Variables **à poser par vous** (secrets, refusées à l'agent) : `SUPABASE_SERVICE_ROLE_KEY`, `TRACKING_SECRET_PEPPER`, `CRON_SECRET`, `SANDBOX_WEBHOOK_SECRET`.
+  ```bash
+  # depuis le dossier du projet, après `vercel login` et `vercel link`
+  openssl rand -base64 48 | vercel env add TRACKING_SECRET_PEPPER production
+  openssl rand -base64 48 | vercel env add CRON_SECRET production
+  openssl rand -base64 48 | vercel env add SANDBOX_WEBHOOK_SECRET production
+  vercel env add SUPABASE_SERVICE_ROLE_KEY production   # collez la clé « service_role » du tableau de bord Supabase
+  ```
+  (répéter avec `preview` si nécessaire) puis `vercel deploy` (ou connecter un dépôt Git au projet).
+- La protection Vercel Auth est active par défaut sur le projet : le site de préproduction n'est visible que des membres de l'équipe.
